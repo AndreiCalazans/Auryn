@@ -1,4 +1,6 @@
-const fromApi = (fillSimilar = true) => ({
+import { Asset, AssetType } from './asset';
+
+const fromApi = (fillSimilar: boolean = true) : Asset => ({
   'images': {
     'poster': 'https://via.placeholder.com/200x300',
     'backdrop': 'https://via.placeholder.com/1068x600',
@@ -14,9 +16,9 @@ const fromApi = (fillSimilar = true) => ({
   'key': Date.now().toString(),
   'id': Date.now(),
   'youtubeId': 'nO_DIwuGBnA',
-  'type': ['tv', 'movie'][Math.round(Math.random())],
+  'type': [AssetType.TV, AssetType.MOVIE][Math.round(Math.random())],
 });
 
 export {
-fromApi,
+  fromApi,
 };

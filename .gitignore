@@ -58,3 +58,4 @@ youi/Release
 
 .vscode/
 secrets.native.js
+.jest/

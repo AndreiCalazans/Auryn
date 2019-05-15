@@ -3,7 +3,9 @@
 	"version": "2.0.0",
 	"private": true,
 	"scripts": {
-		"start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "tslint": "tslint --project ./tsconfig.tslint.json --format codeFrame",
+    "prettier": "prettier --config ./.prettierrc --loglevel warn --write \"*(test-app|packages)/**/*.{js,jsx,ts,tsx}\"",
 		"lint": "node node_modules/eslint/bin/eslint.js --fix .",
 		"test": "jest"
 	},
@@ -43,7 +45,11 @@
 		"jest": "^23.3.0",
 		"react-native-typescript-transformer": "^1.2.12",
 		"react-test-renderer": "^16.4.1",
-		"ts-jest": "^24.0.2",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.11.0",
+    "tslint-config-prettier": "^1.15.0",
+    "tslint-config-standard": "^8.0.1",
+    "tslint-react": "^3.6.0",
 		"typescript": "^3.4.5"
 	},
 	"jest": {

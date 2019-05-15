@@ -1,11 +1,19 @@
-declare module '@youi/react-native-youi' {
-  import * as React from 'react';
-  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription, FlatListProps } from 'react-native';
+declare module "@youi/react-native-youi" {
+  import * as React from "react";
+  import {
+    TextInputProps,
+    TextStyle,
+    ScrollViewProps,
+    NativeEventSubscription
+  } from "react-native";
 
   export interface BackHandlerConstructor {
     exitApp: () => void;
 
-    addEventListener: (event: string, callback: () => void) => NativeEventSubscription;
+    addEventListener: (
+      event: string,
+      callback: () => void
+    ) => NativeEventSubscription;
 
     removeEventListener: (event: string, callback: () => void) => void;
   }
@@ -16,7 +24,7 @@ declare module '@youi/react-native-youi' {
   export type RefCallback<ElementType> = (ref: ElementType) => any;
 
   export interface InputEventObject {
-    eventType: 'up' | 'down';
+    eventType: "up" | "down";
   }
 
   export type InputEventCallback = (event: InputEventObject) => void;
@@ -55,11 +63,13 @@ declare module '@youi/react-native-youi' {
     onBlur?: () => void;
   };
 
-  type SliderRefFunction = (slider: React.RefObject<Slider> & SliderRef) => void;
+  type SliderRefFunction = (
+    slider: React.RefObject<Slider> & SliderRef
+  ) => void;
 
   export interface DimensionsConstructor {
     get: (
-      type: string,
+      type: string
     ) => {
       width: number;
       height: number;
@@ -97,15 +107,13 @@ declare module '@youi/react-native-youi' {
 
     focusable?: boolean;
 
-    onLoad?: (ref: any) => void;
-
-    onFocus?: (e: any) => void;
-
-    onBlur?: (e: any) => void;
+    onLoad?: (ref: TimelineRef) => void;
 
     onFocusInDescendants?: () => void;
 
     onBlurInDescendants?: () => void;
+
+    visible?: boolean;
   }
 
   export interface VideoRefProps {
@@ -131,7 +139,7 @@ declare module '@youi/react-native-youi' {
 
     onDurationChanged: () => void;
 
-    onStateChanged: (evt: VideoStateChangeEvent) => void;
+    onStateChanged: (evt: any) => void;
 
     onAvailableAudioTracksChanged: () => void;
 
@@ -140,7 +148,7 @@ declare module '@youi/react-native-youi' {
     source: VideoUriSource;
   }
 
-  export class VideoRef extends React.Component<RefProps & Partial<VideoRefProps>> {
+  export class VideoRef extends React.Component<RefProps & VideoRefProps> {
     seek: (value: number) => void;
 
     play: () => void;
@@ -148,10 +156,51 @@ declare module '@youi/react-native-youi' {
     pause: () => void;
 
     stop: () => void;
+  }
 
-    onPlaybackComplete: () => void;
+  interface SubtitleTrack {
+    language: string;
+    description: string;
+    trackName: string;
+  }
 
-    reactTag: number;
+  export interface RokuVideoContentMetadata {
+    videoUrl?: string;
+    contentType?: "movie" | "series" | "season" | "episode" | "audio";
+    title?: string;
+    titleSeason?: string;
+    description?: string;
+    licenseServerURL?: string;
+    appData?: string;
+    serializationURL?: string;
+    keySystem?: "playready" | "widevine" | "aaxs" | "verimatrix";
+    authDomain?: string;
+    encodingType?:
+      | "PlayReadyLicenseAcquisitionUrl"
+      | "PlayReadyLicenseAcquisitionAndChallenge";
+    encodingKey?: string;
+    bookmarkPosition?: number;
+    LicenseRequestToken?: string;
+    subtitleUrl?: string;
+    subtitleTracks?: SubtitleTrack[];
+    drmHeader?: string;
+
+    //Conviva Metadata:
+    "convivaInfo<<assetName"?: string;
+    "convivaInfo<<streamUrl"?: string;
+    "convivaInfo<<viewerId"?: number;
+    "convivaInfo<<playerName"?: string;
+    "convivaTag<<contentId"?: number;
+    "convivaTag<<show"?: string;
+    "convivaTag<<season"?: number;
+    "convivaTag<<episodeNumber"?: number;
+    "convivaTag<<episodeName"?: string;
+    "convivaTag<<contentType"?: string;
+    "convivaTag<<licenseType"?: string;
+    "convivaTag<<studio"?: string;
+    "convivaTag<<genre"?: string;
+    "convivaTag<<streamProtocol"?: string;
+    "convivaTag<<isResume"?: string;
   }
 
   interface VideoUriSource {
@@ -159,47 +208,18 @@ declare module '@youi/react-native-youi' {
     type: string;
   }
 
-  export interface BackgroundNotificationInfo {
-    title: string;
-    text: string;
-    fastForwardIncrementMs: number;
-    rewindIncrementMs: number;
-    imageUri: string;
-  }
-
-  export interface BackgroundPlaybackProps {
-    backgroundPlaybackEnabled: boolean;
-    backgroundNotificationInfo: Partial<BackgroundNotificationInfo>;
-  }
-
   export type VideoRefFunction = (video: VideoRef) => void;
 
-  export type VideoStateChangeEvent = {
-    nativeEvent: {
-      playbackState: 'paused' | 'playing' | 'buffering',
-      mediaState: 'unloaded' | 'ready' | 'preparing',
-    }
-  }
-
-  type VideoErrorType = {
-    nativeEvent: {
-      message: string,
-      errorCode: number,
-    },
-  };
-
-  export type VideoProps = {
+  export interface VideoProps {
     style?: any;
 
     paused?: boolean;
 
     source: VideoUriSource;
 
-    maxBitrate? : number;
+    ref?: string | VideoRefFunction;
 
-    selectedClosedCaptionsTrack?: number;
-
-    ref?: VideoRefFunction;
+    metadata?: RokuVideoContentMetadata;
 
     onReady?: () => void;
 
@@ -207,22 +227,20 @@ declare module '@youi/react-native-youi' {
 
     onBufferingStarted?: () => void;
 
-    onBufferingEnded?: () => void;
+    onBuggeringEnded?: () => void;
 
-    onStateChanged?: (update: VideoStateChangeEvent) => void;
+    onStateChanged?: (update: any) => void;
 
     onDurationChanged?: (update: any) => void;
 
     onCurrentTimeUpdated?: (update: any) => void;
 
-    onErrorOccurred?: (error: VideoErrorType) => void;
+    onErrorOccurred?: (error: any) => void;
 
     onPlaybackComplete?: () => void;
 
-    onAvailableClosedCaptionsTracksChanged?: (closedCaptionTracks: any) => void;
-
     onFinalized?: () => void;
-  } & Partial<BackgroundPlaybackProps>;
+  }
 
   export interface TextRefProps {
     name: string;
@@ -231,15 +249,13 @@ declare module '@youi/react-native-youi' {
 
     style?: TextStyle;
 
-    ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
+    ellipsizeMode?: "head" | "middle" | "tail" | "clip";
 
     numberOfLine?: number;
 
     focusable?: boolean;
 
     visible?: boolean;
-
-    tracking?: number;
   }
 
   export interface CompositionProps {
@@ -252,7 +268,13 @@ declare module '@youi/react-native-youi' {
 
   export class Composition extends React.Component<CompositionProps> {}
 
-  export class TextInputRef extends React.Component<RefProps & TextInputProps> {
+  export interface TextInputPropsYouI {
+    returnKey?: "default" | "go" | "search" | "next" | "done";
+  }
+
+  export class TextInputRef extends React.Component<
+    RefProps & TextInputProps & TextInputPropsYouI
+  > {
     focus(): void;
 
     activate(): void;
@@ -287,6 +309,13 @@ declare module '@youi/react-native-youi' {
     setFocusRoot(refOrTag: Ref, isFocusRoot: boolean): void;
 
     /**
+     * Enables the focusability of the component with the given tag.
+     *
+     * @param refOrTag The ref or a node handle of the component.
+     */
+    enableFocus(refOrTag: Ref): void;
+
+    /**
      * Sets the focus path between the two components with the given refs/tags in the given direction.
      *
      * @param fromRefOrTag The ref or a node handle of the component from which the focus path originates.
@@ -296,13 +325,13 @@ declare module '@youi/react-native-youi' {
     setNextFocus(
       fromRefOrTag: Ref,
       toRefOrTag: Ref,
-      focusDirection: 'up' | 'down' | 'right' | 'left' | 'forward' | 'reverse',
+      focusDirection: "up" | "down" | "right" | "left" | "forward" | "reverse"
     ): void;
   }
 
   export const FocusManager: FocusManagerInterface;
 
-  export interface ButtonRefProps {
+  export interface ButtonRefProps extends RefProps {
     visible?: boolean;
 
     enabled?: boolean;
@@ -320,9 +349,9 @@ declare module '@youi/react-native-youi' {
     onTimelinesLoaded?(timelines: { [key: string]: TimelineRef }): void;
   }
 
-  export class ButtonRef extends React.Component<RefProps & ButtonRefProps> {}
+  export class ButtonRef extends React.Component<ButtonRefProps> {}
 
-  export type FormFactorTypes = 'TV' | 'Handset' | 'Tablet';
+  export type FormFactorTypes = "TV" | "Handset" | "Tablet";
 
   type FormFactorSelect<T> = {
     TV?: T;
@@ -352,17 +381,14 @@ declare module '@youi/react-native-youi' {
   }
 
   export interface ImageRefProps {
-    source?: ImageURISource;
+    source: ImageURISource;
 
     style?: {
       width?: number;
       height?: number;
-      tintColor?: string;
     };
 
-    visible?: boolean;
-
-    resizeMode: 'contain' | 'cover' | 'stretch' | 'center' | 'repeat';
+    resizeMode?: "contain" | "cover" | "stretch" | "center" | "repeat";
 
     onTimelinesLoaded?(): void;
 
@@ -397,10 +423,6 @@ declare module '@youi/react-native-youi' {
 
     maxToRenderPerBatch?: number;
 
-    updateCellsBatchingPeriod?: number;
-
-    windowSize?: number;
-
     numColumns?: number;
 
     data: T[];
@@ -415,36 +437,26 @@ declare module '@youi/react-native-youi' {
 
     ListEmptyComponent?: React.ComponentType | React.ReactElement<any>;
 
-    onScroll?: ScrollViewProps['onScroll'];
+    onEndReachedThreshold?: number;
 
-    scrollEventThrottle?: ScrollViewProps['scrollEventThrottle'];
+    onScroll?: ScrollViewProps["onScroll"];
 
-    snapToAlignment?: string;
+    scrollEventThrottle?: ScrollViewProps["scrollEventThrottle"];
 
     snapToInterval?: number;
 
-    getItemLayout?: (
-      data: T,
-      index: number,
-    ) => {
-      index: number;
-      length: number;
-      offset: number;
-    };
+    snapToAlignment?: "start" | "center" | "end";
 
     getItem?(): {};
 
     getItemCount?(): number;
 
-    onEndReached?: FlatListProps<T>['onEndReached'];
+    getItemLayout?(
+      {  }: object,
+      index: number
+    ): { length: number; offset: number; index: number };
 
-    onEndReachedThreshold?: FlatListProps<T>['onEndReachedThreshold'];
-
-    onContentSizeChange?: FlatListProps<T>['onContentSizeChange'];
-
-    onMomentumScrollBegin?: FlatListProps<T>['onMomentumScrollBegin'];
-
-    onMomentumScrollEnd?: FlatListProps<T>['onMomentumScrollEnd'];
+    onEndReached?(): void;
 
     onLayout?(): void;
 
@@ -455,9 +467,7 @@ declare module '@youi/react-native-youi' {
     keyExtractor?(item: T, index: number): string;
   }
 
-  export class ListRef<T> extends React.Component<ListRefProps<T> & RefProps> {
-    scrollToIndex(params: { index: number; animated?: boolean; viewPosition?: number }): void;
-  }
+  export class ListRef<T> extends React.Component<ListRefProps<T> & RefProps> {}
 
   export class ScrollRef extends React.Component<RefProps & ScrollViewProps> {}
 
@@ -485,7 +495,7 @@ declare module '@youi/react-native-youi' {
   export interface TimelineRefProps {
     name: string;
 
-    direction?: 'forward' | 'reverse';
+    direction?: "forward" | "reverse";
 
     loop?: boolean;
 
@@ -518,12 +528,11 @@ declare module '@youi/react-native-youi' {
     onStartedReverse?(): void;
   }
 
-  export class TimelineRef extends React.Component<RefProps & TimelineRefProps> {}
+  export class TimelineRef extends React.Component<
+    RefProps & TimelineRefProps
+  > {}
 
-  export class Video extends React.Component<VideoProps> {
-    static getClosedCaptionsOffId(): number;
-    static getClosedCaptionsTrackId(tracks: number[], selectedTrack: number): number;
-  }
+  export class Video extends React.Component<VideoProps> {}
 
   export class Slider extends React.Component<SliderProps> {}
 
@@ -542,4 +551,11 @@ declare module '@youi/react-native-youi' {
   }
 
   export class ViewRef extends React.Component<RefProps & ViewRefProps> {}
+
+  export const DeviceInfo: {
+    getDeviceId(): string;
+    getSystemName(): string;
+    getSystemVersion(): string;
+    getAdvertisingId(): Promise<string>;
+  };
 }

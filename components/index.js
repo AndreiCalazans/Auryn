@@ -6,7 +6,7 @@
  *
  */
 
-import BackButton from './backButton.youi';
+export { BackButton } from './backButton';
 import ListItem from './listitem.youi';
 import List from './list.youi';
 import Timeline from './timeline.youi';
@@ -17,7 +17,6 @@ import TvContainer from './tvContainer.youi';
 import BackgroundImage from './backgroundImage.youi';
 
 export {
-  BackButton,
   ListItem,
   List,
   Timeline,

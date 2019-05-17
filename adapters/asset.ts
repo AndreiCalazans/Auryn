@@ -1,22 +1,22 @@
 export interface Asset {
-  images: AssetImages,
-  thumbs: AssetImages,
-  title: string,
-  details: string,
-  extra: string,
-  similar: Array<object>,
-  key: string,
-  id: number,
-  youtubeId: string,
-  type: AssetType
+  images: AssetImages;
+  thumbs: AssetImages;
+  title: string;
+  details: string;
+  extra: string;
+  similar: object[];
+  key: string;
+  id: number | string;
+  youtubeId: string;
+  type: AssetType;
 }
 
 export interface AssetImages {
-  poster: string;
-  backdrop: string;
+  Poster: string;
+  Backdrop: string;
 }
 
 export enum AssetType {
   TV = 'tv',
-  MOVIE = 'movie'
+  MOVIE = 'movie',
 }

@@ -7,14 +7,14 @@
  */
 
 import * as React from 'react';
-import { ButtonRef, DeviceInfo, ButtonRefProps } from '@youi/react-native-youi';
+import { ButtonRef, ButtonRefProps } from '@youi/react-native-youi';
+import { Config } from '../config';
 
-const systemName = DeviceInfo.getSystemName();
-const hasHardwareBackButton = !['iOS'].includes(systemName);
-
-export const BackButton: React.FunctionComponent<ButtonRefProps> = ({focusable, ...otherProps}) => <ButtonRef
-  {...otherProps}
-  name="Btn-Back"
-  visible={!hasHardwareBackButton}
-  focusable={focusable && !hasHardwareBackButton}
-/>
+export const BackButton: React.FunctionComponent<ButtonRefProps> = ({ focusable, ...otherProps }) => (
+  <ButtonRef
+    {...otherProps}
+    name="Btn-Back"
+    visible={!Config.hasHardwareBackButton}
+    focusable={focusable && !Config.hasHardwareBackButton}
+  />
+);

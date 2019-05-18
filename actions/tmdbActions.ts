@@ -78,7 +78,7 @@ export const prefetchDetails = (id: number, type: AssetType) => (dispatch: Dispa
 
 export const getDetailsByIdAndType = (id: number, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
   const { tmdbReducer: { cache: { data } } } = getState();
-  const cachedPayload = data.find(it => it.id === id && it.type === type);
+  const cachedPayload = (data as TmdbApi[]).find(it => it.id === id && it.type === type);
   if (cachedPayload) {
     return dispatch({
       type: 'TMDB_DETAILS',

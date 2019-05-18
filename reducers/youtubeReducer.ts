@@ -1,4 +1,5 @@
 import {  YoutubeApiActions } from '../actions/youtubeActions';
+import { VideoUriSource } from '@youi/react-native-youi';
 
 /**
  * Copyright (c) You i Labs Inc.
@@ -8,17 +9,21 @@ import {  YoutubeApiActions } from '../actions/youtubeActions';
  *
  */
 
-const defaultVideoSource = {
-  uri: 'http://www.streambox.fr/playlists/x31jrg1/x31jrg1.m3u8',
-  type: 'HLS',
-};
+interface YoutubeReducerState {
+  videoSource: VideoUriSource;
+  fetching: boolean;
+  fetched: boolean;
+  error: Error | null;
+}
 
-export default function youtubeReducer(state = { // eslint-disable-line max-lines-per-function
-  videoSource: {},
+const initalState: YoutubeReducerState = {
+  videoSource: { uri: 'http://www.streambox.fr/playlists/x31jrg1/x31jrg1.m3u8', type: 'HLS' },
   fetching: false,
   fetched: false,
   error: null,
-}, action: YoutubeApiActions) {
+};
+
+export const youtubeReducer = (state = initalState, action: YoutubeApiActions): YoutubeReducerState => {
   switch (action.type) {
     case 'YOUTUBE_VIDEO_FULFILLED': {
       const format = action.payload.formats ?
@@ -39,7 +44,7 @@ export default function youtubeReducer(state = { // eslint-disable-line max-line
       // No viable format found
       return {
         ...state,
-        videoSource: defaultVideoSource,
+        videoSource: initalState.videoSource,
         fetching: false,
         fetched: true,
       };
@@ -53,4 +58,4 @@ export default function youtubeReducer(state = { // eslint-disable-line max-line
     default:
       return state;
   }
-}
+};

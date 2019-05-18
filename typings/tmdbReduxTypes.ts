@@ -1,4 +1,5 @@
 import { TmdbResults, TmdbApi } from '../adapters/tmdbAdapter';
+import { Asset } from '../adapters/asset';
 
 interface TmdbApiActions {
   type: 'TMDB_DISCOVER' | 'TMDB_MOVIES' | 'TMDB_TV' | 'TMDB_SEARCH';
@@ -45,22 +46,22 @@ export interface TmdbStore {
 }
 
 export interface TmdbState<T> {
-  data: T;
-  fetching: boolean;
-  fetched: boolean;
-  error: Error | null;
+  data?: T;
+  fetching?: boolean;
+  fetched?: boolean;
+  error?: Error | null;
 }
 
 export interface TmdbSearch {
-  tv: TmdbResults<TmdbApi>;
-  movies: TmdbResults<TmdbApi>;
+  tv: Asset[];
+  movies: Asset[];
 }
 
 export interface TmdbReducerState {
-  discover: TmdbState<TmdbResults<TmdbApi>>;
-  movies: TmdbState<TmdbResults<TmdbApi>>;
-  tv: TmdbState<TmdbResults<TmdbApi>>;
+  discover: TmdbState<Asset[]>;
+  movies: TmdbState<Asset[]>;
+  tv: TmdbState<Asset[]>;
   details: TmdbState<TmdbApi> | {};
   cache: TmdbState<TmdbApi[]>;
-  search: TmdbSearch | {};
+  search: TmdbState<TmdbSearch>;
 }

@@ -7,7 +7,7 @@
  */
 
  /* eslint-disable complexity */
-import { fromApi, TmdbApi, TmdbResults } from '../adapters/tmdbAdapter';
+import { fromApi, TmdbApi } from '../adapters/tmdbAdapter';
 import { TmdbReducerState, TmdbActionTypes } from '../typings/tmdbReduxTypes';
 
 const normalize = (array: TmdbApi[], length = 10, imagePath: 'poster' | 'backdrop' = 'backdrop') =>
@@ -18,21 +18,21 @@ const normalize = (array: TmdbApi[], length = 10, imagePath: 'poster' | 'backdro
   .slice(0, length)
   .map(it => fromApi(it));
 
-export default function tmdbReducer(state: TmdbReducerState = { // eslint-disable-line max-lines-per-function
+const initialState: TmdbReducerState = { // eslint-disable-line max-lines-per-function
   discover: {
-    data: [] as unknown as TmdbResults<TmdbApi>,
+    data: [],
     fetching: false,
     fetched: false,
     error: null,
   },
   movies: {
-    data: [] as unknown as TmdbResults<TmdbApi>,
+    data: [],
     fetching: false,
     fetched: false,
     error: null,
   },
   tv: {
-    data: [] as unknown as TmdbResults<TmdbApi>,
+    data: [],
     fetching: false,
     fetched: false,
     error: null,
@@ -50,12 +50,15 @@ export default function tmdbReducer(state: TmdbReducerState = { // eslint-disabl
     error: null,
   },
   search: {
-    data: {},
+    data: { tv: [], movies: [] },
     fetching: false,
     fetched: false,
     error: null,
   },
-}, action: TmdbActionTypes) {
+};
+
+// eslint-disable-next-line max-lines-per-function
+export const tmdbReducer = (state = initialState, action: TmdbActionTypes): TmdbReducerState => {
   switch (action.type) {
     case 'TMDB_DISCOVER_FULFILLED':
       return {
@@ -161,7 +164,7 @@ export default function tmdbReducer(state: TmdbReducerState = { // eslint-disabl
       };
 
     case 'TMDB_CACHE_FULFILLED':
-      const cache = [...state.cache.data];
+      const cache = [...state.cache.data as TmdbApi[]];
       const index = cache.findIndex(it => it && it.id === action.payload.id);
       if (index >= 0) {
         const asset = cache.splice(index, 1);
@@ -213,7 +216,6 @@ export default function tmdbReducer(state: TmdbReducerState = { // eslint-disabl
       return {
         ...state,
         search: {
-          data: {},
           fetching: false,
           error: action.payload,
         },
@@ -228,4 +230,4 @@ export default function tmdbReducer(state: TmdbReducerState = { // eslint-disabl
     default:
       return state;
   }
-}
+};

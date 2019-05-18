@@ -8,10 +8,12 @@
 
 import { combineReducers } from 'redux';
 
-import tmdbReducer from './tmdbReducer';
-import youtubeReducer from './youtubeReducer';
+import { tmdbReducer } from './tmdbReducer';
+import { youtubeReducer } from './youtubeReducer';
 
-export default combineReducers({
+export const rootReducer = combineReducers({
   tmdbReducer,
   youtubeReducer,
 });
+
+export type AppState = ReturnType<typeof rootReducer>

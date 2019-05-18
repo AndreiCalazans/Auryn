@@ -17,7 +17,9 @@
     "array-type": false,
     "no-shadowed-variable": false,
     "interface-over-type-literal": false,
-    "no-bitwise": false
+    "no-bitwise": false,
+    "no-empty": false,
+    "no-floating-promises": false
   },
   "jsRules": {},
   "rulesDirectory": []

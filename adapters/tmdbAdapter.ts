@@ -11,7 +11,7 @@ interface TmdbCrew {
   name: string;
 }
 
-interface TmdbArray<T> {
+export interface TmdbResults<T> {
   results: T[];
 }
 
@@ -19,7 +19,7 @@ interface TmdbVideo {
   key: string;
 }
 
-interface TmdbApi {
+export interface TmdbApi {
   poster_path: string;
   backdrop_path: string;
   name: string;
@@ -27,8 +27,12 @@ interface TmdbApi {
   overview: string;
   credits: TmdbCredits;
   id: number;
-  videos: TmdbArray<TmdbVideo>;
-  similar: TmdbArray<TmdbApi>;
+  videos: TmdbResults<TmdbVideo>;
+  similar: TmdbResults<TmdbApi>;
+  original_language: string;
+  adult: boolean;
+  media_type: 'tv' | 'movie';
+  type: 'tv' | 'movie';
 }
 
 const getFeaturedText = (credits: TmdbCredits): string => {

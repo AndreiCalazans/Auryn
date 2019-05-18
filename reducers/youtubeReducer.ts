@@ -1,3 +1,5 @@
+import {  YoutubeApiActions } from '../actions/youtubeActions';
+
 /**
  * Copyright (c) You i Labs Inc.
  *
@@ -16,27 +18,12 @@ export default function youtubeReducer(state = { // eslint-disable-line max-line
   fetching: false,
   fetched: false,
   error: null,
-}, action) {
+}, action: YoutubeApiActions) {
   switch (action.type) {
-    case 'YOUTUBE_CLEAR':
-      return {
-        videoSource: {},
-        fetching: false,
-        fetched: false,
-        error: null,
-      };
-    case 'YOUTUBE_VIDEO':
-      return {
-        ...state,
-        videoSource: {},
-        fetching: true,
-        fetched: false,
-      };
     case 'YOUTUBE_VIDEO_FULFILLED': {
       const format = action.payload.formats ?
         action.payload.formats.find(fmt => fmt.type.indexOf('mp4') > 0 && fmt.quality === 'hd720')
         : null;
-
       if (format) {
         return {
           ...state,

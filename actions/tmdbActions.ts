@@ -6,13 +6,19 @@
  *
  */
 
+ /* eslint-disable max-len */
+
 import { tmdbApiKey } from '../secrets';
+import { Dispatch } from 'redux';
+import { TmdbApi } from '../adapters/tmdbAdapter';
+import { AssetType } from '../adapters/asset';
+import { TmdbActionTypes, TmdbStore } from '../typings/tmdbReduxTypes';
 
 const familyFilter = false;
 const familyGenre = 10751;
 
-export const getDiscover = () => dispatch => {
-  let movies = [];
+export const getDiscover = () => (dispatch: Dispatch<TmdbActionTypes>) => {
+  let movies: TmdbApi[] = [];
 
   dispatch({
     type: 'TMDB_DISCOVER',
@@ -23,23 +29,23 @@ export const getDiscover = () => dispatch => {
         return fetch(`http://api.themoviedb.org/3/discover/tv?api_key=${tmdbApiKey}&with_original_language=en&with_genres=${familyFilter ? familyGenre : ''}`);
       })
       .then(response => response.json())
-      .then(tv => movies.concat(tv.results.slice(0, 12)).sort(() => 0.5 - Math.random())),
+      .then(tv => ({ results: movies.concat(tv.results.slice(0, 12)).sort(() => 0.5 - Math.random()) })),
   });
 };
 
-export const getMovies = () => dispatch => dispatch({
+export const getMovies = () => (dispatch: Dispatch) => dispatch({
   type: 'TMDB_MOVIES',
   payload: fetch(`http://api.themoviedb.org/3/movie/popular?api_key=${tmdbApiKey}&with_original_language=en`)
     .then(response => response.json()),
 });
 
-export const getTv = () => dispatch => dispatch({
+export const getTv = () => (dispatch: Dispatch) => dispatch({
   type: 'TMDB_TV',
   payload: fetch(`http://api.themoviedb.org/3/tv/popular?api_key=${tmdbApiKey}&with_original_language=en`)
     .then(response => response.json()),
 });
 
-export const prefetchDetails = (id, type) => (dispatch, getState) => {
+export const prefetchDetails = (id: number, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
   const { tmdbReducer: { cache: { data, fetching } } } = getState();
 
   if (fetching || !data)
@@ -70,7 +76,7 @@ export const prefetchDetails = (id, type) => (dispatch, getState) => {
   });
 };
 
-export const getDetailsByIdAndType = (id, type) => (dispatch, getState) => {
+export const getDetailsByIdAndType = (id: number, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
   const { tmdbReducer: { cache: { data } } } = getState();
   const cachedPayload = data.find(it => it.id === id && it.type === type);
   if (cachedPayload) {
@@ -91,7 +97,7 @@ export const getDetailsByIdAndType = (id, type) => (dispatch, getState) => {
   });
 };
 
-export const search = query => dispatch => dispatch({
+export const search = (query: string) => (dispatch: Dispatch) => dispatch({
   type: 'TMDB_SEARCH',
   meta: {
     debounce: {

@@ -7,28 +7,32 @@
  */
 
  /* eslint-disable complexity */
-import { fromApi } from '../adapters/tmdbAdapter';
+import { fromApi, TmdbApi, TmdbResults } from '../adapters/tmdbAdapter';
+import { TmdbReducerState, TmdbActionTypes } from '../typings/tmdbReduxTypes';
 
-const normalize = (array, length = 10, imagePath = 'backdrop_path') =>
-  array.filter(asset => asset.original_language === 'en' && asset[imagePath] && !asset.adult)
-    .slice(0, length)
-    .map(it => fromApi(it));
+const normalize = (array: TmdbApi[], length = 10, imagePath: 'poster' | 'backdrop' = 'backdrop') =>
+  array.filter(asset => {
+    const hasImage = imagePath === 'poster' ? asset.poster_path : asset.backdrop_path;
+    return asset.original_language === 'en' && hasImage && !asset.adult;
+  })
+  .slice(0, length)
+  .map(it => fromApi(it));
 
-export default function tmdbReducer(state = { // eslint-disable-line max-lines-per-function
+export default function tmdbReducer(state: TmdbReducerState = { // eslint-disable-line max-lines-per-function
   discover: {
-    data: [],
+    data: [] as unknown as TmdbResults<TmdbApi>,
     fetching: false,
     fetched: false,
     error: null,
   },
   movies: {
-    data: [],
+    data: [] as unknown as TmdbResults<TmdbApi>,
     fetching: false,
     fetched: false,
     error: null,
   },
   tv: {
-    data: [],
+    data: [] as unknown as TmdbResults<TmdbApi>,
     fetching: false,
     fetched: false,
     error: null,
@@ -51,13 +55,13 @@ export default function tmdbReducer(state = { // eslint-disable-line max-lines-p
     fetched: false,
     error: null,
   },
-}, action) {
+}, action: TmdbActionTypes) {
   switch (action.type) {
     case 'TMDB_DISCOVER_FULFILLED':
       return {
         ...state,
         discover: {
-          data: normalize(action.payload, 12),
+          data: normalize(action.payload.results, 12),
           fetching: false,
           fetched: true,
         },
@@ -85,7 +89,7 @@ export default function tmdbReducer(state = { // eslint-disable-line max-lines-p
       return {
         ...state,
         movies: {
-          data: normalize(action.payload.results, 10, 'poster_path'),
+          data: normalize(action.payload.results, 10, 'poster'),
           fetching: false,
           fetched: true,
         },
@@ -155,12 +159,6 @@ export default function tmdbReducer(state = { // eslint-disable-line max-lines-p
         ...state,
         details: { fetching: true, fetched: false },
       };
-
-    case 'TMDB_DETAILS_CLEAR':
-    return {
-      ...state,
-      details: { asset: null },
-    };
 
     case 'TMDB_CACHE_FULFILLED':
       const cache = [...state.cache.data];

@@ -1,19 +1,17 @@
-declare module "@youi/react-native-youi" {
-  import * as React from "react";
-  import {
-    TextInputProps,
-    TextStyle,
-    ScrollViewProps,
-    NativeEventSubscription
-  } from "react-native";
+/* eslint-disable max-lines */
+/* eslint-disable max-len */
+/* eslint-disable init-declarations */
+/* eslint-disable lines-around-comment */
+/* eslint-disable max-classes-per-file */
+/* eslint-disable max-lines */
+declare module '@youi/react-native-youi' {
+  import * as React from 'react';
+  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription } from 'react-native';
 
   export interface BackHandlerConstructor {
     exitApp: () => void;
 
-    addEventListener: (
-      event: string,
-      callback: () => void
-    ) => NativeEventSubscription;
+    addEventListener: (event: string, callback: () => void) => NativeEventSubscription;
 
     removeEventListener: (event: string, callback: () => void) => void;
   }
@@ -24,7 +22,7 @@ declare module "@youi/react-native-youi" {
   export type RefCallback<ElementType> = (ref: ElementType) => any;
 
   export interface InputEventObject {
-    eventType: "up" | "down";
+    eventType: 'up' | 'down';
   }
 
   export type InputEventCallback = (event: InputEventObject) => void;
@@ -37,7 +35,7 @@ declare module "@youi/react-native-youi" {
 
   export const Input: InputConstructor;
 
-  export type SliderRefProps = {
+  export interface SliderRefProps {
     ref?: string | SliderRefFunction;
 
     name: string;
@@ -61,15 +59,13 @@ declare module "@youi/react-native-youi" {
     onFocus?: () => void;
 
     onBlur?: () => void;
-  };
+  }
 
-  type SliderRefFunction = (
-    slider: React.RefObject<Slider> & SliderRef
-  ) => void;
+  type SliderRefFunction = (slider: React.RefObject<Slider> & SliderRef) => void;
 
   export interface DimensionsConstructor {
     get: (
-      type: string
+      type: string,
     ) => {
       width: number;
       height: number;
@@ -166,18 +162,16 @@ declare module "@youi/react-native-youi" {
 
   export interface RokuVideoContentMetadata {
     videoUrl?: string;
-    contentType?: "movie" | "series" | "season" | "episode" | "audio";
+    contentType?: 'movie' | 'series' | 'season' | 'episode' | 'audio';
     title?: string;
     titleSeason?: string;
     description?: string;
     licenseServerURL?: string;
     appData?: string;
     serializationURL?: string;
-    keySystem?: "playready" | "widevine" | "aaxs" | "verimatrix";
+    keySystem?: 'playready' | 'widevine' | 'aaxs' | 'verimatrix';
     authDomain?: string;
-    encodingType?:
-      | "PlayReadyLicenseAcquisitionUrl"
-      | "PlayReadyLicenseAcquisitionAndChallenge";
+    encodingType?: 'PlayReadyLicenseAcquisitionUrl' | 'PlayReadyLicenseAcquisitionAndChallenge';
     encodingKey?: string;
     bookmarkPosition?: number;
     LicenseRequestToken?: string;
@@ -185,22 +179,22 @@ declare module "@youi/react-native-youi" {
     subtitleTracks?: SubtitleTrack[];
     drmHeader?: string;
 
-    //Conviva Metadata:
-    "convivaInfo<<assetName"?: string;
-    "convivaInfo<<streamUrl"?: string;
-    "convivaInfo<<viewerId"?: number;
-    "convivaInfo<<playerName"?: string;
-    "convivaTag<<contentId"?: number;
-    "convivaTag<<show"?: string;
-    "convivaTag<<season"?: number;
-    "convivaTag<<episodeNumber"?: number;
-    "convivaTag<<episodeName"?: string;
-    "convivaTag<<contentType"?: string;
-    "convivaTag<<licenseType"?: string;
-    "convivaTag<<studio"?: string;
-    "convivaTag<<genre"?: string;
-    "convivaTag<<streamProtocol"?: string;
-    "convivaTag<<isResume"?: string;
+    // Conviva Metadata:
+    'convivaInfo<<assetName'?: string;
+    'convivaInfo<<streamUrl'?: string;
+    'convivaInfo<<viewerId'?: number;
+    'convivaInfo<<playerName'?: string;
+    'convivaTag<<contentId'?: number;
+    'convivaTag<<show'?: string;
+    'convivaTag<<season'?: number;
+    'convivaTag<<episodeNumber'?: number;
+    'convivaTag<<episodeName'?: string;
+    'convivaTag<<contentType'?: string;
+    'convivaTag<<licenseType'?: string;
+    'convivaTag<<studio'?: string;
+    'convivaTag<<genre'?: string;
+    'convivaTag<<streamProtocol'?: string;
+    'convivaTag<<isResume'?: string;
   }
 
   interface VideoUriSource {
@@ -249,7 +243,7 @@ declare module "@youi/react-native-youi" {
 
     style?: TextStyle;
 
-    ellipsizeMode?: "head" | "middle" | "tail" | "clip";
+    ellipsizeMode?: 'head' | 'middle' | 'tail' | 'clip';
 
     numberOfLine?: number;
 
@@ -269,12 +263,10 @@ declare module "@youi/react-native-youi" {
   export class Composition extends React.Component<CompositionProps> {}
 
   export interface TextInputPropsYouI {
-    returnKey?: "default" | "go" | "search" | "next" | "done";
+    returnKey?: 'default' | 'go' | 'search' | 'next' | 'done';
   }
 
-  export class TextInputRef extends React.Component<
-    RefProps & TextInputProps & TextInputPropsYouI
-  > {
+  export class TextInputRef extends React.Component<RefProps & TextInputProps & TextInputPropsYouI> {
     focus(): void;
 
     activate(): void;
@@ -325,7 +317,7 @@ declare module "@youi/react-native-youi" {
     setNextFocus(
       fromRefOrTag: Ref,
       toRefOrTag: Ref,
-      focusDirection: "up" | "down" | "right" | "left" | "forward" | "reverse"
+      focusDirection: 'up' | 'down' | 'right' | 'left' | 'forward' | 'reverse',
     ): void;
   }
 
@@ -351,14 +343,14 @@ declare module "@youi/react-native-youi" {
 
   export class ButtonRef extends React.Component<ButtonRefProps> {}
 
-  export type FormFactorTypes = "TV" | "Handset" | "Tablet";
+  export type FormFactorTypes = 'TV' | 'Handset' | 'Tablet';
 
-  type FormFactorSelect<T> = {
+  interface FormFactorSelect<T> {
     TV?: T;
     Handset?: T;
     Tablet?: T;
     default?: T;
-  };
+  }
 
   export interface FormFactorInterface {
     isTV: boolean;
@@ -388,7 +380,7 @@ declare module "@youi/react-native-youi" {
       height?: number;
     };
 
-    resizeMode?: "contain" | "cover" | "stretch" | "center" | "repeat";
+    resizeMode?: 'contain' | 'cover' | 'stretch' | 'center' | 'repeat';
 
     onTimelinesLoaded?(): void;
 
@@ -439,22 +431,19 @@ declare module "@youi/react-native-youi" {
 
     onEndReachedThreshold?: number;
 
-    onScroll?: ScrollViewProps["onScroll"];
+    onScroll?: ScrollViewProps['onScroll'];
 
-    scrollEventThrottle?: ScrollViewProps["scrollEventThrottle"];
+    scrollEventThrottle?: ScrollViewProps['scrollEventThrottle'];
 
     snapToInterval?: number;
 
-    snapToAlignment?: "start" | "center" | "end";
+    snapToAlignment?: 'start' | 'center' | 'end';
 
     getItem?(): {};
 
     getItemCount?(): number;
 
-    getItemLayout?(
-      {  }: object,
-      index: number
-    ): { length: number; offset: number; index: number };
+    getItemLayout?({  }: object, index: number): { length: number; offset: number; index: number };
 
     onEndReached?(): void;
 
@@ -495,7 +484,7 @@ declare module "@youi/react-native-youi" {
   export interface TimelineRefProps {
     name: string;
 
-    direction?: "forward" | "reverse";
+    direction?: 'forward' | 'reverse';
 
     loop?: boolean;
 
@@ -528,9 +517,7 @@ declare module "@youi/react-native-youi" {
     onStartedReverse?(): void;
   }
 
-  export class TimelineRef extends React.Component<
-    RefProps & TimelineRefProps
-  > {}
+  export class TimelineRef extends React.Component<RefProps & TimelineRefProps> {}
 
   export class Video extends React.Component<VideoProps> {}
 

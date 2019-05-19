@@ -7,28 +7,29 @@
  */
 
 import * as React from 'react';
-import { ListRef, RefProps, ListItem as ListItemType } from '@youi/react-native-youi';
-import { FlatListProps } from 'react-native';
+import { ListRef, ListItem as ListItemType } from '@youi/react-native-youi';
 import { DiscoverContainer, ListItem, TvContainer } from '.';
 import { isEqual, chunk } from 'lodash';
-import { ImageType } from './listitem';
+import { ImageType, ListItemPressEvent, ListItemFocusEvent } from './listitem';
 import { Config } from '../config';
 import { Asset } from '../adapters/asset';
 
-interface ListProps extends FlatListProps<Asset> {
-  type: string;
+interface ListProps<T>  {
+  type?: 'Movies' | 'Shows' | 'Live' | 'Discover' | 'None';
   focusable: boolean;
-  onPressItem: () => void;
-  onFocusItem: () => void;
+  onPressItem?: ListItemPressEvent;
+  onFocusItem?: ListItemFocusEvent;
   name: string;
-  data: Asset[];
+  data: T[];
+  extraData?: any;
 };
 
-type ImageSettings = ImageType & { length: number };
+interface ImageSettings extends ImageType { length: number };
 
-export class List extends React.Component<ListProps, {}> {
+export class List extends React.Component<ListProps<Asset>> {
   static defaultProps = {
     extraData: [],
+    type: 'None',
   };
 
   getImageSettings = (): ImageSettings => {
@@ -49,7 +50,7 @@ export class List extends React.Component<ListProps, {}> {
 
   chunkSize: number = this.props.type === 'Discover' ? 3 : 2;
 
-  shouldComponentUpdate(nextProps: ListProps) {
+  shouldComponentUpdate(nextProps: ListProps<Asset>) {
     if (Config.isRoku) return true;
 
     if (!isEqual(nextProps.extraData, this.props.extraData)) return true;
@@ -78,8 +79,8 @@ export class List extends React.Component<ListProps, {}> {
       return (
         <DiscoverContainer
           focusable={this.props.focusable}
-          onPress={this.props.onPressItem}
-          onFocus={this.props.onFocusItem}
+          onPressItem={this.props.onPressItem}
+          onFocusItem={this.props.onFocusItem}
           data={item}
           index={index}
         />
@@ -90,8 +91,8 @@ export class List extends React.Component<ListProps, {}> {
       return (
         <TvContainer
           focusable={this.props.focusable}
-          onPress={this.props.onPressItem}
-          onFocus={this.props.onFocusItem}
+          onPressItem={this.props.onPressItem}
+          onFocusItem={this.props.onFocusItem}
           data={item}
         />
       );
@@ -103,7 +104,7 @@ export class List extends React.Component<ListProps, {}> {
   render() {
     const { data, type, name } = this.props;
 
-    if (['Discover', 'Shows'].includes(type)) {
+    if (['Discover', 'Shows'].includes(type!)) {
       return (
         <ListRef
           name={name}

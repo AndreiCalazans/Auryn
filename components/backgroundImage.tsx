@@ -9,10 +9,18 @@
 import * as React from 'react';
 import { View, Image, StyleSheet, ImageURISource } from 'react-native';
 
-interface Props {
+interface BackgroundImageProps {
   source: ImageURISource;
   children: React.ReactChildren;
 }
+
+export const BackgroundImage: React.FunctionComponent<BackgroundImageProps> = ({ source, children }) => (
+  <View style={styles.container}>
+    <Image style={styles.background} source={source} />
+    {children}
+  </View>
+);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -28,10 +36,3 @@ const styles = StyleSheet.create({
     borderWidth: 5,
   },
 });
-
-export const BackgroundImage: React.FunctionComponent<Props> = ({ source, children }) => (
-  <View style={styles.container}>
-    <Image style={styles.background} source={source} />
-    {children}
-  </View>
-);

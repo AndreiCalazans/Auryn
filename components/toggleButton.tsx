@@ -7,91 +7,85 @@
  */
 
 import * as React from 'react';
-import { ButtonRef, ButtonRefProps, ViewRefProps } from '@youi/react-native-youi';
+import { ButtonRef, RefProps } from '@youi/react-native-youi';
 import { Timeline } from '.';
 import { Config } from '../config';
 
-type ToggleButtonProps = ButtonRefProps &
-  ViewRefProps & {
-    index?: number;
+export type ToggleButtonPress = (index: number) => void;
+
+interface ToggleButtonProps extends RefProps {
+    index: number;
     toggled?: boolean;
     onToggle?: (index: number) => void;
-    onFocus?: (buttonRef: ButtonRef) => void;
-    onPress?: (index: number) => void;
+    onFocus?: (buttonRef: React.RefObject<ButtonRef>) => void;
+    onPress?: ToggleButtonPress;
     isRadio?: boolean;
   };
 
-export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggled: boolean }> {
+export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggled?: boolean }> {
   static defaultProps = {
     onToggle: () => {},
     onFocus: () => {},
     onPress: () => {},
+    index: 0,
   };
 
-  toggleOffTimeline!: Timeline;
+  state = { toggled: this.props.index === 0 };
 
-  toggleOnTimeline!: Timeline;
+  toggleOffTimeline = React.createRef<Timeline>();
 
-  innerRef!: ButtonRef;
+  toggleOnTimeline = React.createRef<Timeline>();
 
-  constructor(props: ToggleButtonProps) {
-    super(props);
-    this.state = {
-      toggled: props.index === 0,
-    };
-  }
+  innerRef = React.createRef<ButtonRef>();
 
   componentDidUpdate(prevProps: ToggleButtonProps) {
     if (this.props.toggled !== prevProps.toggled) {
       this.setState(
-        {
-          toggled: this.props.toggled,
-        },
+        { toggled: this.props.toggled },
         () => {
-          this.state.toggled || !Config.isRoku ? this.toggleOnTimeline.play() : this.toggleOffTimeline.play();
+          if ((this.state.toggled || !Config.isRoku) && this.toggleOnTimeline.current)
+            this.toggleOnTimeline.current.play();
+          else if (this.toggleOffTimeline.current)
+            this.toggleOffTimeline.current.play();
         },
       );
     }
   }
 
-  onFocus = (): void => {
-    this.props.onFocus(this.innerRef);
+  onFocus = () => {
+    if (this.props.onFocus)
+      this.props.onFocus(this.innerRef);
   };
 
-  onPress = (): void => {
+  onPress = () => {
     if (this.state.toggled && this.props.isRadio) return;
 
-    this.props.onPress(this.props.index);
-    this.props.onToggle(this.props.index);
+    if (this.props.onPress)
+      this.props.onPress(this.props.index);
+
+    if (this.props.onToggle)
+      this.props.onToggle(this.props.index);
 
     this.setState({
       toggled: !this.state.toggled,
     });
   };
 
-  render = () => {
-    const off = Config.isRoku ? (
-      <Timeline name="Toggle-Off" direction={'forward'} ref={(ref: Timeline) => (this.toggleOffTimeline = ref)} />
-    ) : null;
-
-    return (
+  render = () => (
       <ButtonRef
         focusable={this.props.focusable}
         name={this.props.name}
-        ref={(ref: ButtonRef) => (this.innerRef = ref)}
+        ref={this.innerRef}
         onFocus={this.onFocus}
         onPress={this.onPress}
       >
         <Timeline
           name="Toggle-On"
           direction={this.state.toggled || Config.isRoku ? 'forward' : 'reverse'}
-          ref={(ref: Timeline) => (this.toggleOnTimeline = ref)}
-          onLoad={() => {
-            if (this.state.toggled) this.toggleOnTimeline.play();
-          }}
+          ref={this.toggleOnTimeline}
+          playOnLoad={this.state.toggled}
         />
-        {off}
+        {Config.isRoku ? <Timeline name="Toggle-Off" direction={'forward'} ref={this.toggleOffTimeline} /> : null}
       </ButtonRef>
     );
-  };
 }

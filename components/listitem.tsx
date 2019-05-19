@@ -7,15 +7,24 @@
  */
 
 import * as React from 'react';
-import { Composition, TextRef, ButtonRef, ImageRef, ButtonRefProps } from '@youi/react-native-youi';
+import { Composition, TextRef, ButtonRef, ImageRef } from '@youi/react-native-youi';
 import { Asset, AssetType } from '../adapters/asset';
 
-interface ListItemProps extends Partial<ButtonRefProps> {
+export type ListItemFocusEvent =
+  (id: number | string, type: AssetType, innerRef: React.RefObject<ButtonRef>, shouldChangeFocus?: boolean)
+  => void | Promise<void>
+
+export type ListItemPressEvent =
+  (id: number | string, type: AssetType, innerRef: React.RefObject<ButtonRef>)
+  => void | Promise<void>
+
+interface ListItemProps {
   imageType: ImageType;
   data: Asset;
   shouldChangeFocus?: boolean;
-  // onFocus: (id: number | string, type: AssetType, innerRef?: ButtonRef, shouldChangeFocus?: boolean) => void | Promise<void>;
-  // onPress: (id: number | string, type: AssetType, innerRef?: ButtonRef) => void | Promise<void>;
+  onFocus?: ListItemFocusEvent;
+  onPress?: ListItemPressEvent;
+  focusable?: boolean;
 };
 
 export interface ImageType {
@@ -23,12 +32,12 @@ export interface ImageType {
   size: 'Small' | 'Large';
 }
 
-export class ListItem extends React.Component<ListItemProps, {}> {
+export class ListItem extends React.Component<ListItemProps> {
   buttonName: string;
 
   compositionName: string;
 
-  innerRef!: ButtonRef;
+  innerRef = React.createRef<ButtonRef>();
 
   constructor(props: ListItemProps) {
     super(props);
@@ -40,10 +49,15 @@ export class ListItem extends React.Component<ListItemProps, {}> {
     return nextProps.focusable !== this.props.focusable;
   }
 
-  onFocus = () =>
-    this.props.onFocus(this.props.data.id, this.props.data.type, this.innerRef, this.props.shouldChangeFocus);
+  onFocus = () => {
+    if (this.props.onFocus)
+      this.props.onFocus(this.props.data.id, this.props.data.type, this.innerRef, this.props.shouldChangeFocus);
+  }
 
-  onPress = () => this.props.onPress(this.props.data.id, this.props.data.type, this.innerRef);
+  onPress = () => {
+    if (this.props.onPress)
+      this.props.onPress(this.props.data.id, this.props.data.type, this.innerRef);
+  }
 
   render() {
     const { data, imageType, focusable } = this.props;
@@ -52,7 +66,7 @@ export class ListItem extends React.Component<ListItemProps, {}> {
       <Composition source={this.compositionName} loadSync={true}>
         <ButtonRef
           focusable={focusable}
-          ref={(ref: ButtonRef) => (this.innerRef = ref)}
+          ref={this.innerRef}
           onFocus={this.onFocus}
           onPress={this.onPress}
           name={this.buttonName}

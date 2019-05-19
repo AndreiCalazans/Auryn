@@ -10,7 +10,7 @@ import * as React from 'react';
 import { ToggleButton } from '.';
 import { RefProps } from '@youi/react-native-youi';
 
-type ToggleGroupProps = RefProps & {
+interface ToggleGroupProps extends RefProps {
   names: string[];
   onPressItem: () => {};
   prefix: string;
@@ -23,22 +23,16 @@ export class ToggleGroup extends React.Component<ToggleGroupProps, { toggles: bo
     onPressItem: () => {},
   };
 
-  buttonRefs: ToggleButton[];
+  state = { toggles: [true].concat(Array(this.props.names.length).fill(false)) };
 
-  constructor(props: ToggleGroupProps) {
-    super(props);
-    this.state = {
-      toggles: [true].concat(new Array(props.names.length - 1).fill(false)),
-    };
-    this.buttonRefs = [];
-  }
+  buttonRefs: React.RefObject<ToggleButton>[] = Array(this.props.names.length).fill(React.createRef<ToggleButton>());
 
   onToggle = (index: number) =>
     this.setState({
       toggles: this.props.names.map((_, i) => i === index),
     });
 
-  getButtonRef = (index: number) => this.buttonRefs[index];
+  getButtonRef = (index: number): React.RefObject<ToggleButton> => this.buttonRefs[index];
 
   render() {
     const { focusable, onPressItem, prefix, names } = this.props;
@@ -53,7 +47,7 @@ export class ToggleGroup extends React.Component<ToggleGroupProps, { toggles: bo
           onPress={onPressItem}
           toggled={this.state.toggles[index]}
           isRadio={true}
-          ref={(ref: ToggleButton) => (this.buttonRefs[index] = ref)}
+          ref={this.buttonRefs[index]}
         />
       )),
     ];

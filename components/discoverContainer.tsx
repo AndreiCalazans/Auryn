@@ -6,15 +6,18 @@
  *
  */
 
+ /* eslint-disable max-len */
+
 import * as React from 'react';
 import { View } from 'react-native';
 import { ListItem } from '.';
 import { Asset } from '../adapters/asset';
+import { ListItemPressEvent, ListItemFocusEvent } from './listitem';
 
 interface DiscoverContainerProps {
   data: Asset[];
-  onPress: () => void;
-  onFocus: () => void;
+  onPressItem?: ListItemPressEvent;
+  onFocusItem?: ListItemFocusEvent;
   focusable: boolean;
   index: number;
 }
@@ -22,8 +25,8 @@ interface DiscoverContainerProps {
 // eslint-disable-next-line max-lines-per-function
 export const DiscoverContainer: React.FunctionComponent<DiscoverContainerProps> = ({
   data,
-  onPress,
-  onFocus,
+  onPressItem,
+  onFocusItem,
   focusable,
   index,
 }) => {
@@ -33,16 +36,16 @@ export const DiscoverContainer: React.FunctionComponent<DiscoverContainerProps> 
     <View style={{ flexDirection: 'row' }}>
       <ListItem
         focusable={focusable}
-        onPress={onPress}
-        onFocus={onFocus}
+        onPress={onPressItem}
+        onFocus={onFocusItem}
         shouldChangeFocus={index % 2 !== 0}
         imageType={{ type: 'Backdrop', size: 'Small' }}
         data={data[0]}
       />
       <ListItem
         focusable={focusable}
-        onPress={onPress}
-        onFocus={onFocus}
+        onPress={onPressItem}
+        onFocus={onFocusItem}
         shouldChangeFocus={index % 2 !== 0}
         imageType={{ type: 'Backdrop', size: 'Small' }}
         data={data[1]}
@@ -52,8 +55,8 @@ export const DiscoverContainer: React.FunctionComponent<DiscoverContainerProps> 
   const largeItem = (
     <ListItem
       focusable={focusable}
-      onPress={onPress}
-      onFocus={onFocus}
+      onPress={onPressItem}
+      onFocus={onFocusItem}
       shouldChangeFocus={index % 2 === 0}
       imageType={{ type: 'Backdrop', size: 'Large' }}
       data={data[2]}

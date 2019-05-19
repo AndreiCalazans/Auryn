@@ -8,32 +8,33 @@
 
 import * as React from 'react';
 import { View } from 'react-native';
-import { ListItem } from './listitem';
+import { ListItem, ListItemPressEvent, ListItemFocusEvent } from './listitem';
 import { Asset } from '../adapters/asset';
 
 interface TvContainerProps {
   data: Asset[];
-  onPress: () => void;
-  onFocus: () => void;
+  onPressItem?: ListItemPressEvent;
+  onFocusItem?: ListItemFocusEvent;
   focusable: boolean;
 }
 
-export const TvContainer: React.FunctionComponent<TvContainerProps> = ({ data, onPress, onFocus, focusable }) => {
+// eslint-disable-next-line max-len
+export const TvContainer: React.FunctionComponent<TvContainerProps> = ({ data, onPressItem, onFocusItem, focusable }) => {
   if (data.length !== 2) return null;
   return (
     <View>
       <ListItem
         focusable={focusable}
-        onPress={onPress}
-        onFocus={onFocus}
+        onPress={onPressItem}
+        onFocus={onFocusItem}
         shouldChangeFocus={false}
         imageType={{ type: 'Backdrop', size: 'Small' }}
         data={data[0]}
       />
       <ListItem
         focusable={focusable}
-        onPress={onPress}
-        onFocus={onFocus}
+        onPress={onPressItem}
+        onFocus={onFocusItem}
         shouldChangeFocus={false}
         imageType={{ type: 'Backdrop', size: 'Small' }}
         data={data[1]}

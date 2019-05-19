@@ -45,7 +45,7 @@ export const getTv = () => (dispatch: Dispatch) => dispatch({
     .then(response => response.json()),
 });
 
-export const prefetchDetails = (id: number, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
+export const prefetchDetails = (id: number | string, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
   const { tmdbReducer: { cache: { data, fetching } } } = getState();
 
   if (fetching || !data)

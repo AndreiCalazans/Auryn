@@ -13,12 +13,12 @@ import { Config } from '../config';
 
 type ToggleButtonProps = ButtonRefProps &
   ViewRefProps & {
-    index: number;
-    toggled: boolean;
-    onToggle: (index: number) => void;
-    onFocus: (buttonRef: ButtonRef) => void;
-    onPress: (index: number) => void;
-    isRadio: boolean;
+    index?: number;
+    toggled?: boolean;
+    onToggle?: (index: number) => void;
+    onFocus?: (buttonRef: ButtonRef) => void;
+    onPress?: (index: number) => void;
+    isRadio?: boolean;
   };
 
 export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggled: boolean }> {

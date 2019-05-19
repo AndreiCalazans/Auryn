@@ -10,12 +10,12 @@ import * as React from 'react';
 import { Composition, TextRef, ButtonRef, ImageRef, ButtonRefProps } from '@youi/react-native-youi';
 import { Asset, AssetType } from '../adapters/asset';
 
-type ListItemProps = Partial<ButtonRefProps> & {
+interface ListItemProps extends Partial<ButtonRefProps> {
   imageType: ImageType;
   data: Asset;
   shouldChangeFocus?: boolean;
-  onFocus: (id: number | string, type: AssetType, innerRef: ButtonRef, shouldChangeFocus?: boolean) => void;
-  onPress: (id: number | string, type: AssetType, innerRef: ButtonRef) => void;
+  // onFocus: (id: number | string, type: AssetType, innerRef?: ButtonRef, shouldChangeFocus?: boolean) => void | Promise<void>;
+  // onPress: (id: number | string, type: AssetType, innerRef?: ButtonRef) => void | Promise<void>;
 };
 
 export interface ImageType {

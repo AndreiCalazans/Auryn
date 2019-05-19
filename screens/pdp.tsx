@@ -6,8 +6,8 @@
  *
  */
 
-import React, { Component } from 'react';
-import { withNavigationFocus, NavigationActions } from 'react-navigation';
+import * as React from 'react';
+import { withNavigationFocus, NavigationActions, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
 import {
   BackHandler,
   ButtonRef,
@@ -15,25 +15,48 @@ import {
   ImageRef,
   TextRef,
   ViewRef,
-  View,
   FocusManager,
 } from '@youi/react-native-youi';
-
-import { connect } from 'react-redux';
+import { View, NativeEventSubscription } from 'react-native';
+import { connect, DispatchProp } from 'react-redux';
 import { Timeline, List, BackButton } from '../components';
 import { youtube, tmdb } from '../actions';
-import PropTypes from 'prop-types';
+import { Asset, AssetType } from '../adapters/asset';
+import { Config } from '../config';
+import { YoutubeApiActions } from '../actions/youtubeActions';
+import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
+import console = require('console');
 
-class PDP extends Component {
-  constructor(props) {
-    super(props);
-  }
+interface PdpProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions | TmdbActionTypes> {
+  isFocused: boolean;
+  asset: Asset;
+  fetched: boolean;
+}
+
+class PDP extends React.Component<PdpProps> {
+  outTimeline = React.createRef<Timeline>();
+
+  videoOutTimeline = React.createRef<Timeline>();
+
+  videoInTimeline = React.createRef<Timeline>();
+
+  contentOutTimeline = React.createRef<Timeline>();
+
+  contentInTimeline = React.createRef<Timeline>();
+
+  posterButton = React.createRef<ButtonRef>();
+
+  focusListener!: NavigationEventSubscription;
+
+  blurListener!: NavigationEventSubscription;
+
+  backHandlerListener!: NativeEventSubscription;
 
   navigateBack = async () => {
-    this.outPromise = this.outTimeline ? this.outTimeline.play : Promise.resolve;
-    await this.outPromise();
+    if (this.outTimeline.current)
+      await this.outTimeline.current.play();
 
-    if (global.isRoku)
+    if (Config.isRoku)
       this.props.navigation.navigate({ routeName: 'Lander' });
     else
       this.props.navigation.popToTop();
@@ -41,23 +64,24 @@ class PDP extends Component {
     return true;
   }
 
-  onPressItem = async (id, type) => {
+  onPressItem = async (id: any, type: AssetType) => {
     this.props.dispatch(tmdb.getDetailsByIdAndType(id, type));
-    await this.contentOutTimeline.play();
+    if (this.contentOutTimeline.current) await this.contentOutTimeline.current.play();
     await this.props.navigation.navigate({ routeName: 'PDP', params: { id, type }, key: id });
-    FocusManager.focus(this.posterButton);
-    this.contentInTimeline.play();
+    if (this.posterButton.current) FocusManager.focus(this.posterButton.current);
+    if (this.contentInTimeline.current) this.contentInTimeline.current.play();
   }
 
-  onFocusItem = (ref, id, type) => this.props.dispatch(tmdb.prefetchDetails(id, type));
+  onFocusItem = (id: any, type: AssetType) => this.props.dispatch(tmdb.prefetchDetails(id, type));
 
   componentDidMount() {
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
-      if (this.posterButton)
-        setTimeout(() => FocusManager.focus(this.posterButton), 1);
 
-      if (this.videoOutTimeline) this.videoOutTimeline.play();
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      console.log('PDP', 'didfocus');
+      console.log('PDP', this.posterButton);
+      this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
+
+      if (this.videoOutTimeline.current) this.videoOutTimeline.current.play();
     });
 
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
@@ -69,7 +93,7 @@ class PDP extends Component {
     this.backHandlerListener.remove();
   }
 
-  shouldComponentUpdate(nextProps) {
+  shouldComponentUpdate(nextProps: PdpProps) {
     // Re-render if lost/gained focus
     if (nextProps.isFocused !== this.props.isFocused)
       return true;
@@ -82,24 +106,20 @@ class PDP extends Component {
   }
 
   playVideo = async () => {
-    await this.videoInTimeline.play();
+    if (this.videoInTimeline.current)
+      await this.videoInTimeline.current.play();
     this.props.navigation.dispatch(NavigationActions.navigate({
       routeName: 'Video',
-      params: { videoSource: this.props.asset.videoSource },
     }));
-  }
-
-  getFeaturedText = credits => {
-    const director = credits.crew.find(it => it.job === 'Director');
-    const cast = credits.cast.slice(0, 3).map(it => it.name).join(', ');
-    if (director)
-      return `Director: ${director.name} | Starring: ${cast}`;
-
-    return `Starring: ${cast}`;
   }
 
   onFocusPoster = () => {
     this.props.dispatch(youtube.getVideoSourceByYoutubeId(this.props.asset.youtubeId));
+  }
+
+  onLoad = () => {
+    if (this.posterButton.current)
+      FocusManager.focus(this.posterButton.current);
   }
 
   render() { // eslint-disable-line max-lines-per-function
@@ -110,13 +130,10 @@ class PDP extends Component {
 
     return (
       <Composition source="Auryn_PDP">
-        <Timeline name="VideoIn" ref={timeline => this.videoInTimeline = timeline} />
-        <Timeline name="VideoOut" ref={timeline => this.videoOutTimeline = timeline} />
-        <Timeline name="PDPIn"
-          ref={timeline => this.inTimeline = timeline}
-          onLoad={timeline => timeline.play()}
-        />
-        <Timeline name="PDPOut" ref={timeline => this.outTimeline = timeline} />
+        <Timeline name="VideoIn" ref={this.videoInTimeline} />
+        <Timeline name="VideoOut" ref={this.videoOutTimeline} />
+        <Timeline name="PDPIn" playOnLoad />
+        <Timeline name="PDPOut" ref={this.outTimeline} />
 
         <ViewRef name="PDP-Scroller" visible={isFocused && fetched}>
           <BackButton
@@ -133,34 +150,34 @@ class PDP extends Component {
 
           <Timeline
             name="ContentIn"
-            ref={timeline => this.contentInTimeline = timeline}
+            ref={this.contentInTimeline}
             onLoad={ref => ref.play()} />
-          <Timeline name="ContentOut" ref={timeline => this.contentOutTimeline = timeline} />
+          <Timeline name="ContentOut" ref={this.contentOutTimeline} />
 
           <ButtonRef
             name="Btn-Poster-Large"
             focusable={isFocused}
             onPress={this.playVideo}
-            ref={ref => this.posterButton = ref}
-            onLoad={() => FocusManager.focus(this.posterButton)}
+            ref={this.posterButton}
+            onLoad={this.onLoad}
             onFocus={this.onFocusPoster}
           >
             <ImageRef
               name="Image-Dynamic"
-              source={{ uri: asset.thumbs.poster }}
+              source={{ uri: asset.thumbs.Poster }}
             />
           </ButtonRef>
 
           <ImageRef
             name="Image-Dynamic-Background"
-            source={{ uri: asset.images.backdrop }}
+            source={{ uri: asset.images.Backdrop }}
           />
 
           <ViewRef name="Layout-PDP-Meta">
             <TextRef name="Text-Title" text={asset.title} />
             <TextRef name="Text-Overview" text={asset.details} />
             <TextRef name="Text-Featured" text={asset.extra} />
-            <Timeline name="In2" ref={timeline => this.pdpMetaInTimeline = timeline} onLoad={ref => ref.play()} />
+            <Timeline name="In2" playOnLoad />
           </ViewRef>
 
         </ViewRef>
@@ -176,11 +193,3 @@ const mapStateToProps = store => ({
 
 export default withNavigationFocus(connect(mapStateToProps)(PDP));
 export { PDP as PdpTest };
-
-PDP.propTypes = {
-  navigation: PropTypes.object,
-  dispatch: PropTypes.func,
-  isFocused: PropTypes.bool,
-  asset: PropTypes.object.isRequired,
-  fetched: PropTypes.bool,
-};

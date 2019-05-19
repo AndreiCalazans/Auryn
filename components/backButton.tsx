@@ -10,7 +10,7 @@ import * as React from 'react';
 import { ButtonRef, ButtonRefProps } from '@youi/react-native-youi';
 import { Config } from '../config';
 
-export const BackButton: React.FunctionComponent<ButtonRefProps> = ({ focusable, ...otherProps }) => (
+export const BackButton: React.FunctionComponent<Partial<ButtonRefProps>> = ({ focusable, ...otherProps }) => (
   <ButtonRef
     {...otherProps}
     name="Btn-Back"

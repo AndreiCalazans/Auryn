@@ -9,10 +9,13 @@
 import * as React from 'react';
 import { TimelineRef, TimelineRefProps } from '@youi/react-native-youi';
 
-type TimelineProps = Partial<TimelineRefProps> & {
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+
+interface TimelineProps extends Omit<TimelineRefProps, 'onLoad'>{
   onLoad: (ref: Timeline) => void;
   onCompleted: () => void;
   name: string;
+  playOnLoad: boolean;
 };
 
 export class Timeline extends React.PureComponent<TimelineProps> {
@@ -20,9 +23,10 @@ export class Timeline extends React.PureComponent<TimelineProps> {
     onLoad: () => {},
     onCompleted: () => {},
     direction: 'forward',
+    playOnLoad: false,
   };
 
-  innerRef!: TimelineRef;
+  innerRef = React.createRef<TimelineRef>();
 
   resolve?: (value?: string) => void;
 
@@ -31,8 +35,10 @@ export class Timeline extends React.PureComponent<TimelineProps> {
       <TimelineRef
         {...this.props}
         name={this.props.name}
-        onLoad={(timeline: TimelineRef) => {
-          this.innerRef = timeline;
+        ref={this.innerRef}
+        onLoad={() => {
+          if (this.props.playOnLoad && this.innerRef.current)
+            this.innerRef.current.play();
           this.props.onLoad(this);
         }}
         loop={this.props.loop || this.props.name.toLowerCase() === 'loop'}
@@ -44,14 +50,19 @@ export class Timeline extends React.PureComponent<TimelineProps> {
   play = (seek: number = 0) =>
     new Promise(resolve => {
       this.resolve = resolve;
-      if (seek) this.innerRef.seek(this.props.direction === 'forward' ? seek : 1 - seek);
-      else this.innerRef.play();
+      if (this.innerRef.current) {
+        if (seek)
+          this.innerRef.current.seek(this.props.direction === 'forward' ? seek : 1 - seek);
+        else
+          this.innerRef.current.play();
+      }
     });
 
   stop = () =>
     new Promise(resolve => {
       this.resolve = resolve;
-      this.innerRef.stop();
+      if (this.innerRef.current)
+        this.innerRef.current.stop();
     });
 
   onCompleted = () => {

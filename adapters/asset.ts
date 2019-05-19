@@ -4,7 +4,7 @@ export interface Asset {
   title: string;
   details: string;
   extra: string;
-  similar: object[];
+  similar: Asset[];
   key: string;
   id: number | string;
   youtubeId: string;

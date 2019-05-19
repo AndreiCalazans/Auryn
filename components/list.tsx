@@ -15,7 +15,7 @@ import { ImageType } from './listitem';
 import { Config } from '../config';
 import { Asset } from '../adapters/asset';
 
-type ListProps = FlatListProps<RefProps> & {
+interface ListProps extends FlatListProps<Asset> {
   type: string;
   focusable: boolean;
   onPressItem: () => void;

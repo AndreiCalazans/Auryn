@@ -6,23 +6,42 @@
  *
  */
 
-import React, { Component } from 'react';
+import * as React from 'react';
 import { Composition, BackHandler, ButtonRef, TextRef, FocusManager } from '@youi/react-native-youi';
 import { Timeline, BackButton } from '../components';
-import { withNavigationFocus } from 'react-navigation';
-import PropTypes from 'prop-types';
+import { withNavigationFocus, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
+import { NativeEventSubscription } from 'react-native';
+import { Config } from '../config';
 
-class Profile extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { activeButtonIndex: 1 };
-  }
+interface ProfileProps extends NavigationScreenProps {
+  isFocused: boolean;
+}
+
+interface ProfileState {
+  activeButtonIndex: number;
+}
+
+class Profile extends React.Component<ProfileProps, ProfileState> {
+  state = { activeButtonIndex: 1 }
+
+  focusListener!: NavigationEventSubscription;
+
+  blurListener!: NavigationEventSubscription;
+
+  backHandlerListener!: NativeEventSubscription;
+
+  outTimeline = React.createRef<Timeline>();
+
+  activeButton = React.createRef<ButtonRef>();
 
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
     });
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
+
+    if (this.activeButton.current)
+      FocusManager.focus(this.activeButton.current);
   }
 
   componentWillUnmount() {
@@ -32,10 +51,10 @@ class Profile extends Component {
   }
 
   navigateBack = async () => {
-    this.outPromise = this.outTimeline ? this.outTimeline.play : Promise.resolve;
-    await this.outPromise();
+    if (this.outTimeline.current)
+      await this.outTimeline.current.play();
 
-    if (global.isRoku)
+    if (Config.isRoku)
       this.props.navigation.navigate({ routeName: 'Lander' });
     else
       this.props.navigation.goBack(null);
@@ -43,18 +62,15 @@ class Profile extends Component {
     return true;
   }
 
-  onPress = i => this.setState({ activeButtonIndex: i })
+  onPress = (i: number) => this.setState({ activeButtonIndex: i })
 
   render = () => {
-    const buttons = new Array(3).fill().map((_, i) =>
+    const buttons = Array(3).fill(null).map((_, i) =>
       <ButtonRef
         key={i}
         name={`Btn-Profile${i + 1}`}
-        onLoad={() => FocusManager.focus(this.activeButton)}
         onPress={() => this.onPress(i + 1)}
-        ref={ref => {
-          if (i + 1 === this.state.activeButtonIndex) this.activeButton = ref;
-        }}
+        ref={(i + 1 === this.state.activeButtonIndex) ? this.activeButton : null}
       >
         <TextRef name="Active User" text={this.state.activeButtonIndex === i + 1 ? 'Active User' : ''} />
       </ButtonRef>);
@@ -65,8 +81,8 @@ class Profile extends Component {
           focusable={this.props.isFocused}
           onPress={this.navigateBack}
         />
-        <Timeline name="ProfileIn" onLoad={timeline => timeline.play()} />
-        <Timeline name="ProfileOut" ref={timeline => this.outTimeline = timeline} />
+        <Timeline name="ProfileIn" playOnLoad />
+        <Timeline name="ProfileOut" ref={this.outTimeline} />
         {buttons}
       </Composition>
     );
@@ -74,9 +90,3 @@ class Profile extends Component {
 }
 
 export default withNavigationFocus(Profile);
-
-Profile.propTypes = {
-  navigation: PropTypes.object,
-  dispatch: PropTypes.func,
-  isFocused: PropTypes.bool,
-};

@@ -6,12 +6,12 @@
  *
  */
 
-import Splash from './splash.youi';
-import Lander from './lander.youi';
-import PDP from './pdp.youi';
-import Search from './search.youi';
-import Profile from './profile.youi';
-import Video from './video.youi';
+import Splash from './splash';
+import Lander from './lander';
+import PDP from './pdp';
+import Search from './search';
+import Profile from './profile';
+import Video from './video';
 
 export {
   Splash,

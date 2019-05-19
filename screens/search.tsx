@@ -6,24 +6,41 @@
  *
  */
 
-import React, { Component } from 'react';
-import { View, Composition, BackHandler, TextInputRef, FocusManager } from '@youi/react-native-youi';
+import * as React from 'react';
+import { Composition, BackHandler, TextInputRef, FocusManager } from '@youi/react-native-youi';
 import { tmdb } from '../actions';
 import { Timeline, List, BackButton } from '../components';
-import { NavigationActions, withNavigationFocus } from 'react-navigation';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { NavigationActions, withNavigationFocus, NavigationEventSubscription, NavigationScreenProps } from 'react-navigation';
+import { connect, DispatchProp } from 'react-redux';
+import { Asset, AssetType } from '../adapters/asset';
+import { NativeEventSubscription, View } from 'react-native';
+import { Config } from '../config';
+import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 
-class Search extends Component {
-  constructor(props) {
-    super(props);
-  }
+interface SearchProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes>{
+  isFocused: boolean;
+  data: { tv: Asset[]; movies: Asset[] };
+}
+
+class Search extends React.Component<SearchProps> {
+  focusListener!: NavigationEventSubscription;
+
+  blurListener!: NavigationEventSubscription;
+
+  backHandlerListener!: NativeEventSubscription;
+
+  outTimeline = React.createRef<Timeline>();
+
+  searchTextInput = React.createRef<TextInputRef>();
 
   componentDidMount() {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
     });
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
+
+    if (this.searchTextInput.current)
+      FocusManager.focus(this.searchTextInput.current);
   }
 
   componentWillUnmount() {
@@ -33,10 +50,10 @@ class Search extends Component {
   }
 
   navigateBack = async () => {
-    this.outPromise = this.outTimeline ? this.outTimeline.play : Promise.resolve;
-    await this.outPromise();
+    if (this.outTimeline.current)
+      await this.outTimeline.current.play();
 
-    if (global.isRoku)
+    if (Config.isRoku)
       this.props.navigation.navigate({ routeName: 'Lander' });
     else
       this.props.navigation.goBack(null);
@@ -45,7 +62,7 @@ class Search extends Component {
     return true;
   }
 
-  onPressItem = async (id, type) => {
+  onPressItem = async (id: any, type: AssetType)  => {
     this.props.dispatch(tmdb.getDetailsByIdAndType(id, type));
     const navigateAction = NavigationActions.navigate({
       routeName: 'PDP',
@@ -55,13 +72,14 @@ class Search extends Component {
       },
       key: id,
     });
-    await this.outTimeline.play();
+    if (this.outTimeline.current)
+      await this.outTimeline.current.play();
     this.props.navigation.dispatch(navigateAction);
   }
 
-  onFocusItem = (ref, id, type) => this.props.dispatch(tmdb.prefetchDetails(id, type));
+  onFocusItem = (id: any, type: AssetType) => this.props.dispatch(tmdb.prefetchDetails(id, type));
 
-  search = query => this.props.dispatch(tmdb.search(query));
+  search = (query: string) => this.props.dispatch(tmdb.search(query));
 
   render() { // eslint-disable-line max-lines-per-function
     const { isFocused, data: { movies, tv } } = this.props;
@@ -69,7 +87,7 @@ class Search extends Component {
     if (!isFocused)
       return <View />;
 
-    const tvList = tv || !global.isRoku ? <List
+    const tvList = tv || !Config.isRoku ? <List
       name="List-PDP"
       data={tv}
       focusable={isFocused}
@@ -77,7 +95,7 @@ class Search extends Component {
       onFocusItem={this.onFocusItem}
       extraData={tv}
     /> : null;
-    const moviesList = movies || !global.isRoku ? <List
+    const moviesList = movies || !Config.isRoku ? <List
       name="List-Movies"
       data={movies}
       focusable={isFocused}
@@ -93,10 +111,7 @@ class Search extends Component {
           onPress={this.navigateBack}
         />
         <TextInputRef
-          ref={ref => this.searchText = ref}
-          onLoad={() => {
-            FocusManager.focus(this.searchText);
-          }}
+          ref={this.searchTextInput}
           name="TextInput"
           secureTextEntry={false}
           onChangeText={this.search}
@@ -105,12 +120,8 @@ class Search extends Component {
         {tvList}
         {moviesList}
 
-        <Timeline name="SearchOut" ref={timeline => this.outTimeline = timeline} />
-
-        <Timeline name="SearchIn"
-          ref={timeline => this.inTimeline = timeline}
-          onLoad={timeline => timeline.play()}
-        />
+        <Timeline name="SearchOut" ref={this.outTimeline} />
+        <Timeline name="SearchIn" playOnLoad/>
       </Composition>
     );
   }
@@ -121,10 +132,3 @@ const mapStateToProps = store => ({
 });
 export default withNavigationFocus(connect(mapStateToProps)(Search));
 export { Search as SearchTest };
-
-Search.propTypes = {
-  isFocused: PropTypes.bool,
-  data: PropTypes.object,
-  navigation: PropTypes.object,
-  dispatch: PropTypes.func,
-};

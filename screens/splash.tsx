@@ -6,16 +6,23 @@
  *
  */
 
-import React, { Component } from 'react';
-import { Composition, ViewRef, View, StyleSheet } from '@youi/react-native-youi';
+import * as React from 'react';
+import { Composition, ViewRef } from '@youi/react-native-youi';
+import { View, StyleSheet } from 'react-native';
 import { Timeline } from '../components';
 import { tmdb } from '../actions';
-import { NavigationActions } from 'react-navigation';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { NavigationActions, NavigationScreenProps } from 'react-navigation';
+import { connect, DispatchProp } from 'react-redux';
+import { Config } from '../config';
+import { AnyAction } from 'redux';
 
+interface SplashProps extends NavigationScreenProps, DispatchProp<AnyAction> {
+  fetched: boolean;
+};
 
-class Splash extends Component {
+class Splash extends React.Component<SplashProps> {
+  outTimeline: React.RefObject<Timeline> = React.createRef<Timeline>();
+
   componentDidMount() {
     this.props.dispatch(tmdb.getDiscover());
     this.props.dispatch(tmdb.getMovies());
@@ -23,9 +30,9 @@ class Splash extends Component {
   }
 
   async componentDidUpdate() {
-    if (this.props.fetched) {
-      if (!global.isRoku)
-        await this.outTimeline.play();
+    if (this.props.fetched && !Config.isRoku) {
+      if (!Config.isRoku && this.outTimeline.current)
+        await this.outTimeline.current.play();
       const landerNavigationAction = NavigationActions.navigate({
         routeName: 'Lander',
       });
@@ -35,25 +42,12 @@ class Splash extends Component {
 
   render() {
     return (
-      <View style={styles.container}
-      >
+      <View style={styles.container}>
         <Composition source="Auryn_Splash">
-          <Timeline
-            name="SplashIn"
-            onLoad={timeline => timeline.play()}
-          />
-          <Timeline
-            name="SplashOut"
-            ref={timeline => {
-              this.outTimeline = timeline;
-            }}
-          />
+          <Timeline name="SplashIn" playOnLoad />
+          <Timeline name="SplashOut" ref={this.outTimeline} />
           <ViewRef name="Loader">
-            <Timeline name="Loop"
-              onLoad={timeline => {
-                if (!global.isRoku) timeline.play();
-              }}
-            />
+            <Timeline name="Loop" playOnLoad={!Config.isRoku} />
           </ViewRef>
         </Composition>
       </View>
@@ -77,9 +71,3 @@ const mapStateToProps = store => ({
 
 export default connect(mapStateToProps)(Splash);
 export { Splash as SplashTest };
-
-Splash.propTypes = {
-  navigation: PropTypes.object,
-  dispatch: PropTypes.func,
-  fetched: PropTypes.bool,
-};

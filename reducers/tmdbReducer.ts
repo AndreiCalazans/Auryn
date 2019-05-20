@@ -227,6 +227,11 @@ export const tmdbReducer = (state = initialState, action: TmdbActionTypes): Tmdb
         search: { fetching: true },
       };
 
+    case 'TMDB_SEARCH_CLEAR':
+      return {
+        ...state,
+        search: { data: { tv: [], movies: [] } },
+      };
     default:
       return state;
   }

@@ -71,10 +71,10 @@ class Lander extends React.Component<LanderProps, LanderState> {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
 
-      if (this.lastFocusNavItem.current) {
+      if (this.lastFocusNavItem && this.lastFocusNavItem.current) {
         FocusManager.enableFocus(this.lastFocusNavItem.current);
         FocusManager.focus(this.lastFocusNavItem.current);
-      } else if (this.lastFocusItem.current) {
+      } else if (this.lastFocusItem && this.lastFocusItem.current) {
         FocusManager.enableFocus(this.lastFocusItem.current);
         FocusManager.focus(this.lastFocusItem.current);
       }
@@ -117,7 +117,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
     if (!Config.isRoku) {
       if (this.menuButtons.current) {
         for (let i = 0; i < this.lists.length; i++)
-        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(i), this.lists[index], 'down');
+        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(i).current, this.lists[index].current, 'down');
       }
 
       if (this.menuButtons.current
@@ -127,7 +127,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
       ) {
         FocusManager.setNextFocus(this.searchButton.current, this.lists[index].current, 'down');
         FocusManager.setNextFocus(this.profileButton.current, this.lists[index].current, 'down');
-        FocusManager.setNextFocus(this.lists[index].current, this.menuButtons.current.getButtonRef(index), 'up');
+        FocusManager.setNextFocus(this.lists[index].current, this.menuButtons.current.getButtonRef(index).current, 'up');
       }
     }
 
@@ -149,9 +149,9 @@ class Lander extends React.Component<LanderProps, LanderState> {
     if (shouldChangeFocus === false || Config.isRoku || !ref.current) return;
 
     if (this.menuButtons.current) {
-      FocusManager.setNextFocus(ref.current, this.menuButtons.current.getButtonRef(this.state.currentListIndex), 'up');
+      FocusManager.setNextFocus(ref.current, this.menuButtons.current.getButtonRef(this.state.currentListIndex).current, 'up');
       for (let index = 0; index < this.lists.length; index++)
-        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(index), ref.current, 'down');
+        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(index).current, ref.current, 'down');
     }
 
     if (this.searchButton.current && this.profileButton.current) {

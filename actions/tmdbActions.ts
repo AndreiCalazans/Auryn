@@ -76,7 +76,7 @@ export const prefetchDetails = (id: number | string, type: AssetType) => (dispat
   });
 };
 
-export const getDetailsByIdAndType = (id: number, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
+export const getDetailsByIdAndType = (id: number | string, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
   const { tmdbReducer: { cache: { data } } } = getState();
   const cachedPayload = (data as TmdbApi[]).find(it => it.id === id && it.type === type);
   if (cachedPayload) {
@@ -97,13 +97,18 @@ export const getDetailsByIdAndType = (id: number, type: AssetType) => (dispatch:
   });
 };
 
-export const search = (query: string) => (dispatch: Dispatch) => dispatch({
-  type: 'TMDB_SEARCH',
-  meta: {
-    debounce: {
-      time: 500,
+export const search = (query: string) => (dispatch: Dispatch) => {
+  if (query === '')
+    return dispatch({ type: 'TMDB_SEARCH_CLEAR' });
+
+  return dispatch({
+    type: 'TMDB_SEARCH',
+    meta: {
+      debounce: {
+        time: 500,
+      },
     },
-  },
-  payload: fetch(`http://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&api_key=${tmdbApiKey}`)
-    .then(response => response.json()),
-});
+    payload: fetch(`http://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&api_key=${tmdbApiKey}`)
+      .then(response => response.json()),
+    });
+};

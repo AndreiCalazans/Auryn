@@ -2,7 +2,7 @@ import { TmdbResults, TmdbApi } from '../adapters/tmdbAdapter';
 import { Asset } from '../adapters/asset';
 
 interface TmdbApiActions {
-  type: 'TMDB_DISCOVER' | 'TMDB_MOVIES' | 'TMDB_TV' | 'TMDB_SEARCH';
+  type: 'TMDB_DISCOVER' | 'TMDB_MOVIES' | 'TMDB_TV' | 'TMDB_SEARCH' | 'TMDB_SEARCH_CLEAR';
   payload: Promise<TmdbResults<TmdbApi>>;
 }
 

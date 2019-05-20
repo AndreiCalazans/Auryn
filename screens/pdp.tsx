@@ -25,7 +25,7 @@ import { Asset, AssetType } from '../adapters/asset';
 import { Config } from '../config';
 import { YoutubeApiActions } from '../actions/youtubeActions';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
-import console = require('console');
+import { AurynAppState } from '../reducers';
 
 interface PdpProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions | TmdbActionTypes> {
   isFocused: boolean;
@@ -77,8 +77,6 @@ class PDP extends React.Component<PdpProps> {
   componentDidMount() {
 
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      console.log('PDP', 'didfocus');
-      console.log('PDP', this.posterButton);
       this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
 
       if (this.videoOutTimeline.current) this.videoOutTimeline.current.play();
@@ -186,7 +184,7 @@ class PDP extends React.Component<PdpProps> {
   }
 }
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: AurynAppState): PdpProps => ({
   asset: store.tmdbReducer.details.data,
   fetched: store.tmdbReducer.details.fetched,
 });

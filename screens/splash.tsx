@@ -15,6 +15,7 @@ import { NavigationActions, NavigationScreenProps } from 'react-navigation';
 import { connect, DispatchProp } from 'react-redux';
 import { Config } from '../config';
 import { AnyAction } from 'redux';
+import { AurynAppState } from '../reducers';
 
 interface SplashProps extends NavigationScreenProps, DispatchProp<AnyAction> {
   fetched: boolean;
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: AurynAppState): SplashProps => ({
   fetched:
     store.tmdbReducer.discover.fetched
     && store.tmdbReducer.movies.fetched

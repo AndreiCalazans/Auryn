@@ -16,6 +16,7 @@ import { Asset, AssetType } from '../adapters/asset';
 import { NativeEventSubscription, View } from 'react-native';
 import { Config } from '../config';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
+import { AurynAppState } from '../reducers';
 
 interface SearchProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes>{
   isFocused: boolean;
@@ -87,23 +88,6 @@ class Search extends React.Component<SearchProps> {
     if (!isFocused)
       return <View />;
 
-    const tvList = tv || !Config.isRoku ? <List
-      name="List-PDP"
-      data={tv}
-      focusable={isFocused}
-      onPressItem={this.onPressItem}
-      onFocusItem={this.onFocusItem}
-      extraData={tv}
-    /> : null;
-    const moviesList = movies || !Config.isRoku ? <List
-      name="List-Movies"
-      data={movies}
-      focusable={isFocused}
-      onPressItem={this.onPressItem}
-      onFocusItem={this.onFocusItem}
-      extraData={movies}
-    /> : null;
-
     return (
       <Composition source="Auryn_Search">
         <BackButton
@@ -117,8 +101,25 @@ class Search extends React.Component<SearchProps> {
           onChangeText={this.search}
         />
 
-        {tvList}
-        {moviesList}
+        {tv || !Config.isRoku ? <List
+            name="List-PDP"
+            data={tv}
+            focusable={isFocused}
+            onPressItem={this.onPressItem}
+            onFocusItem={this.onFocusItem}
+            extraData={tv}
+          />
+          : null
+        }
+        {movies || !Config.isRoku ? <List
+          name="List-Movies"
+          data={movies}
+          focusable={isFocused}
+          onPressItem={this.onPressItem}
+          onFocusItem={this.onFocusItem}
+          extraData={movies}
+        />
+        : null}
 
         <Timeline name="SearchOut" ref={this.outTimeline} />
         <Timeline name="SearchIn" playOnLoad/>
@@ -127,7 +128,7 @@ class Search extends React.Component<SearchProps> {
   }
 }
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: AurynAppState): SearchProps => ({
   data: store.tmdbReducer.search.data,
 });
 export default withNavigationFocus(connect(mapStateToProps)(Search));

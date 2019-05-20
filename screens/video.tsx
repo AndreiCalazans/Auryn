@@ -8,13 +8,14 @@
 
 import * as React from 'react';
 import { Composition, ViewRef, VideoRef, ButtonRef, TextRef, Input, FocusManager, BackHandler, VideoUriSource, InputEventObject } from '@youi/react-native-youi';
-import { View, NativeEventSubscription } from 'react-native';
+import { View, NativeEventSubscription, NativeSyntheticEvent } from 'react-native';
 import { Timeline, ToggleButton, BackButton } from '../components';
 import { withNavigationFocus, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
 import { connect, DispatchProp } from 'react-redux';
 import { Config } from '../config';
 import { Asset } from '../adapters/asset';
 import { YoutubeApiActions } from '../actions/youtubeActions';
+import { AurynAppState } from '../reducers/index';
 
 interface VideoProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions> {
   isFocused: boolean;
@@ -33,7 +34,7 @@ interface VideoState {
   percent?: number;
   mediaState?: string;
   currentTime?: number;
-  duration?: number;
+  duration: number;
 }
 
 const initialState: VideoState = {
@@ -152,7 +153,7 @@ class Video extends React.Component<VideoProps, VideoState> {
   }
 
   inactivityDetected = () => {
-    this.controlsHideTimeline.play();
+    if (this.controlsHideTimeline.current) this.controlsHideTimeline.current.play();
     this.setState({ controlsVisible: false });
   }
 
@@ -175,7 +176,6 @@ class Video extends React.Component<VideoProps, VideoState> {
     if (this.activityTimeout)
       clearTimeout(this.activityTimeout);
 
-    // Set our new activity timeout
     this.activityTimeout = setTimeout(() => this.inactivityDetected(), 3000);
   }
 
@@ -203,7 +203,7 @@ class Video extends React.Component<VideoProps, VideoState> {
     return true;
   }
 
-  onCurrentTimeUpdated = currentTime => { // eslint-disable-line max-statements
+  onCurrentTimeUpdated = (currentTime: NativeSyntheticEvent<number>) => { // eslint-disable-line max-statements
     if (isNaN(currentTime.nativeEvent)) return;
     let sec = Math.floor(currentTime.nativeEvent / 1000);
     let min = Math.floor(sec / 60);
@@ -230,7 +230,7 @@ class Video extends React.Component<VideoProps, VideoState> {
 
   onPlayerError = () => this.setState({ error: true, videoSource: this.fallbackVideo });
 
-  onDurationChanged = duration => this.setState({ duration: duration.nativeEvent });
+  onDurationChanged = (duration: NativeSyntheticEvent<number>) => this.setState({ duration: duration.nativeEvent });
 
   render() { // eslint-disable-line max-lines-per-function
     const { fetched, asset, isFocused } = this.props;
@@ -289,7 +289,7 @@ class Video extends React.Component<VideoProps, VideoState> {
   }
 }
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: AurynAppState): VideoProps => ({
   videoSource: store.youtubeReducer.videoSource,
   asset: store.tmdbReducer.details.data,
   fetched: store.youtubeReducer.fetched,

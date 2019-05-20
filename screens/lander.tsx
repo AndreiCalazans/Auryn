@@ -21,6 +21,9 @@ import { tmdb } from '../actions';
 import { AssetType, Asset } from '../adapters/asset';
 import { Config } from '../config';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
+import { AurynAppState } from '../reducers';
+import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
+import { ToggleButtonPress } from '../components/toggleButton';
 
 interface LanderProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes> {
     isFocused: boolean;
@@ -36,11 +39,11 @@ interface LanderState {
 class Lander extends React.Component<LanderProps, LanderState> {
   state = { currentListIndex: 0 };
 
-  lists: React.RefObject<List>[] = Array(4).fill(React.createRef<List>());;
+  lists: React.RefObject<List>[] = Array(4).fill(React.createRef<List>());
 
-  lastFocusItem: ButtonRef | null = null;
+  lastFocusItem = React.createRef<ButtonRef>();
 
-  lastFocusNavItem: ToggleButton | ButtonRef | null = null;
+  lastFocusNavItem = React.createRef<ButtonRef>();
 
   navButtonNames: string[] = ['Discover', 'Movies', 'Shows', 'Live'];
 
@@ -68,12 +71,12 @@ class Lander extends React.Component<LanderProps, LanderState> {
     this.focusListener = this.props.navigation.addListener('didFocus', () => {
       this.backHandlerListener = BackHandler.addEventListener('hardwareBackPress', this.navigateBack);
 
-      if (this.lastFocusNavItem) {
-        FocusManager.enableFocus(this.lastFocusNavItem);
-        FocusManager.focus(this.lastFocusNavItem);
-      } else if (this.lastFocusItem) {
-        FocusManager.enableFocus(this.lastFocusItem);
-        FocusManager.focus(this.lastFocusItem);
+      if (this.lastFocusNavItem.current) {
+        FocusManager.enableFocus(this.lastFocusNavItem.current);
+        FocusManager.focus(this.lastFocusNavItem.current);
+      } else if (this.lastFocusItem.current) {
+        FocusManager.enableFocus(this.lastFocusItem.current);
+        FocusManager.focus(this.lastFocusItem.current);
       }
 
       if (this.inTimeline.current && this.navInTimeline.current) {
@@ -83,12 +86,12 @@ class Lander extends React.Component<LanderProps, LanderState> {
     });
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
 
-    if (this.menuButtons.current) FocusManager.focus(this.menuButtons.current.getButtonRef(0));
+    if (this.menuButtons.current) FocusManager.focus(this.menuButtons.current.getButtonRef(0).current);
   }
 
   navigateBack = () => {
     if (this.menuButtons.current)
-      FocusManager.focus(this.menuButtons.current.getButtonRef(this.state.currentListIndex));
+      FocusManager.focus(this.menuButtons.current.getButtonRef(this.state.currentListIndex).current);
     return true;
   };
 
@@ -103,14 +106,14 @@ class Lander extends React.Component<LanderProps, LanderState> {
       routeName: screen,
     });
 
-    if (screen === 'Search' && this.searchButton.current) this.lastFocusNavItem = this.searchButton.current;
-    else if (screen === 'Profile' && this.profileButton.current) this.lastFocusNavItem = this.profileButton.current;
+    if (screen === 'Search' && this.searchButton.current) this.lastFocusNavItem = this.searchButton;
+    else if (screen === 'Profile' && this.profileButton.current) this.lastFocusNavItem = this.profileButton;
 
     if (this.outTimeline.current) await this.outTimeline.current.play();
     this.props.navigation.dispatch(navigateAction);
   };
 
-  scrollToViewByIndex = (index: number, animated: boolean = true) => {
+  scrollToViewByIndex: ToggleButtonPress = index => {
     if (!Config.isRoku) {
       if (this.menuButtons.current) {
         for (let i = 0; i < this.lists.length; i++)
@@ -133,30 +136,30 @@ class Lander extends React.Component<LanderProps, LanderState> {
       this.scroller.current.scrollTo({
         x: 0,
         y: (index * 900) + 1, // eslint-disable-line no-extra-parens
-        animated,
+        animated: true,
       });
     }
   };
 
-  onFocusItem = (id: any, type: AssetType, ref: ButtonRef, shouldChangeFocus: boolean) => {
+  onFocusItem: ListItemFocusEvent = (id, type, ref, shouldChangeFocus) => {
     this.props.dispatch(tmdb.prefetchDetails(id, type));
     this.lastFocusItem = ref;
 
-    if (shouldChangeFocus === false || Config.isRoku) return;
+    if (shouldChangeFocus === false || Config.isRoku || !ref.current) return;
 
     if (this.menuButtons.current) {
-      FocusManager.setNextFocus(ref, this.menuButtons.current.getButtonRef(this.state.currentListIndex), 'up');
+      FocusManager.setNextFocus(ref.current, this.menuButtons.current.getButtonRef(this.state.currentListIndex), 'up');
       for (let index = 0; index < this.lists.length; index++)
-        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(index), ref, 'down');
+        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(index), ref.current, 'down');
     }
 
     if (this.searchButton.current && this.profileButton.current) {
-      FocusManager.setNextFocus(this.searchButton.current, ref, 'down');
-      FocusManager.setNextFocus(this.profileButton.current, ref, 'down');
+      FocusManager.setNextFocus(this.searchButton.current, ref.current, 'down');
+      FocusManager.setNextFocus(this.profileButton.current, ref.current, 'down');
     }
   };
 
-  onPressItem = async (id: any, type: AssetType, ref: ButtonRef) => {
+  onPressItem: ListItemPressEvent = async (id, type, ref) => {
     this.lastFocusItem = ref;
     this.lastFocusNavItem = null;
     const navigateAction = NavigationActions.navigate({
@@ -179,7 +182,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
     // null list is used for Roku
     const nullList = (
       <Composition source="Auryn_Container-NullList">
-        <List name="NullList" type="Movies" data={[]} focusable={false} />
+        <List name="NullList" type="None" data={[]} focusable={false} />
       </Composition>
     );
 
@@ -275,7 +278,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
   }
 }
 
-const mapStateToProps = store => ({
+const mapStateToProps = (store: AurynAppState) => ({
   discover: store.tmdbReducer.discover.data,
   movies: store.tmdbReducer.movies.data,
   tv: store.tmdbReducer.tv.data,

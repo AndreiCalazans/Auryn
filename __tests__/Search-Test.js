@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { SearchTest } from '../screens/search.youi';
+import { SearchTest } from '../screens/search';
 import renderer from 'react-test-renderer';
 
 const data = {

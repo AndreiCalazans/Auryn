@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { SplashTest } from '../screens/splash.youi';
+import { SplashTest } from '../screens/splash';
 
 import renderer from 'react-test-renderer';
 

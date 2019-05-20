@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { VideoTest } from '../screens/video.youi';
+import { VideoTest } from '../screens/video';
 import renderer from 'react-test-renderer';
 import { fromApi } from '../adapters/dummyAdapter';
 

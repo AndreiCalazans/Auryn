@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { LanderTest } from '../screens/lander.youi';
+import { LanderTest } from '../screens/lander';
 
 import renderer from 'react-test-renderer';
 

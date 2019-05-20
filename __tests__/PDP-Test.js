@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import { PdpTest } from '../screens/pdp.youi';
+import { PdpTest } from '../screens/pdp';
 import renderer from 'react-test-renderer';
 import { fromApi } from '../adapters/dummyAdapter';
 

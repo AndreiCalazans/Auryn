@@ -7,20 +7,13 @@
  */
 
 import React, { Component } from 'react';
-import { AppRegistry, DeviceInfo } from '@youi/react-native-youi';
+import { AppRegistry } from '@youi/react-native-youi';
 import { Provider } from 'react-redux';
 import store from './store';
 import Stack from './navigation';
 import { BackgroundImage } from './components';
 
 export default class YiReactApp extends Component {
-  constructor() {
-    super();
-    const systemName = DeviceInfo.getSystemName();
-    global.hasHardwareBackButton = !['iOS'].includes(systemName);
-    global.isRoku = systemName === 'RokuOS';
-  }
-
   render = () =>
     <Provider store={store}>
       <BackgroundImage source={{ 'uri': 'res://drawable/default/Background-Gradient.png' }}>

@@ -6,7 +6,7 @@
 /* eslint-disable max-lines */
 declare module '@youi/react-native-youi' {
   import * as React from 'react';
-  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription } from 'react-native';
+  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription, NativeSyntheticEvent } from 'react-native';
 
   export interface BackHandlerConstructor {
     exitApp: () => void;
@@ -23,6 +23,7 @@ declare module '@youi/react-native-youi' {
 
   export interface InputEventObject {
     eventType: 'up' | 'down';
+    keyCode: string;
   }
 
   export type InputEventCallback = (event: InputEventObject) => void;
@@ -113,33 +114,33 @@ declare module '@youi/react-native-youi' {
   }
 
   export interface VideoRefProps {
-    onBufferingStarted: () => void;
+    onBufferingStarted?: () => void;
 
-    onBufferingEnded: () => void;
+    onBufferingEnded?: () => void;
 
-    onErrorOccurred: () => void;
+    onErrorOccurred?: () => void;
 
-    onPreparing: () => void;
+    onPreparing?: () => void;
 
-    onReady: () => void;
+    onReady?: () => void;
 
-    onPlaying: () => void;
+    onPlaying?: () => void;
 
-    onPaused: () => void;
+    onPaused?: () => void;
 
-    onPlaybackComplete: () => void;
+    onPlaybackComplete?: () => void;
 
-    onFinalized: () => void;
+    onFinalized?: () => void;
 
-    onCurrentTimeUpdated: () => void;
+    onCurrentTimeUpdated?: (event: NativeSyntheticEvent<number>) => void;
 
-    onDurationChanged: () => void;
+    onDurationChanged?: (event: NativeSyntheticEvent<number>) => void;
 
-    onStateChanged: (evt: any) => void;
+    onStateChanged?: (evt: any) => void;
 
-    onAvailableAudioTracksChanged: () => void;
+    onAvailableAudioTracksChanged?: () => void;
 
-    onAvailableClosedCaptionsTracksChanged: () => void;
+    onAvailableClosedCaptionsTracksChanged?: () => void;
 
     source: VideoUriSource;
   }
@@ -401,7 +402,7 @@ declare module '@youi/react-native-youi' {
   }
 
   export interface ListRefProps<T> {
-    extraData?: boolean;
+    extraData?: any;
 
     listKey?: string;
 

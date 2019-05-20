@@ -16,4 +16,4 @@ export const rootReducer = combineReducers({
   youtubeReducer,
 });
 
-export type AppState = ReturnType<typeof rootReducer>
+export type AurynAppState = ReturnType<typeof rootReducer>

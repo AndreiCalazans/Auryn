@@ -7,9 +7,10 @@
  */
 
 import * as Screens from './screens';
-import { createStackNavigator, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator, createSwitchNavigator, StackNavigatorConfig } from 'react-navigation';
+import { Config } from './config';
 
-const stackOptions = {
+const stackOptions: StackNavigatorConfig = {
   headerMode: 'none',
   cardStyle: {
     backgroundColor: 'transparent',
@@ -26,7 +27,7 @@ const stackOptions = {
   }),
 };
 
-const createNavigator = global.isRoku ? createSwitchNavigator : createStackNavigator;
+const createNavigator = Config.isRoku ? createSwitchNavigator : createStackNavigator;
 const AppStack = createNavigator(
   {
     Lander: { screen: Screens.Lander },

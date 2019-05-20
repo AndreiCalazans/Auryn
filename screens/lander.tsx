@@ -8,8 +8,8 @@
 
 import * as React from 'react';
 import { Composition, ViewRef, ScrollRef, ButtonRef, FocusManager, BackHandler } from '@youi/react-native-youi';
-import { View, NativeEventSubscription, ScrollView } from 'react-native';
-import { Timeline, ToggleGroup, List, ToggleButton } from '../components';
+import { View, NativeEventSubscription } from 'react-native';
+import { Timeline, ToggleGroup, List } from '../components';
 import {
   withNavigationFocus,
   NavigationActions,
@@ -18,7 +18,7 @@ import {
 } from 'react-navigation';
 import { connect, DispatchProp } from 'react-redux';
 import { tmdb } from '../actions';
-import { AssetType, Asset } from '../adapters/asset';
+import { Asset } from '../adapters/asset';
 import { Config } from '../config';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
@@ -141,6 +141,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
     }
   };
 
+  // eslint-disable-next-line max-params
   onFocusItem: ListItemFocusEvent = (id, type, ref, shouldChangeFocus) => {
     this.props.dispatch(tmdb.prefetchDetails(id, type));
     this.lastFocusItem = ref;

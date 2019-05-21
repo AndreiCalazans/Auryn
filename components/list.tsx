@@ -14,8 +14,12 @@ import { ImageType, ListItemPressEvent, ListItemFocusEvent } from './listitem';
 import { Config } from '../config';
 import { Asset } from '../adapters/asset';
 
+export enum ListType {
+  Featured, Poster, Grid, LargeBackdrop, SmallBackdrop, None
+}
+
 interface ListProps<T>  {
-  type?: 'Movies' | 'Shows' | 'Live' | 'Discover' | 'None';
+  type: ListType;
   focusable: boolean;
   onPressItem?: ListItemPressEvent;
   onFocusItem?: ListItemFocusEvent;
@@ -29,17 +33,17 @@ interface ImageSettings extends ImageType { length: number };
 export class List extends React.Component<ListProps<Asset>> {
   static defaultProps = {
     extraData: [],
-    type: 'None',
+    type: ListType.None,
   };
 
   getImageSettings = (): ImageSettings => {
     switch (this.props.type) {
-      case 'Movies':
+      case ListType.Poster:
         return { type: 'Poster', size: 'Small', length: 400 };
-      case 'Shows':
+      case ListType.Grid:
         return { type: 'Backdrop', size: 'Small', length: 534 };
-      case 'Live':
-      case 'Discover':
+      case ListType.LargeBackdrop:
+      case ListType.Featured:
         return { type: 'Backdrop', size: 'Large', length: 1068 };
       default:
         return { type: 'Backdrop', size: 'Small', length: 534 };
@@ -48,7 +52,7 @@ export class List extends React.Component<ListProps<Asset>> {
 
   imageSettings: ImageSettings = this.getImageSettings();
 
-  chunkSize: number = this.props.type === 'Discover' ? 3 : 2;
+  chunkSize: number = this.props.type === ListType.Featured ? 3 : 2;
 
   shouldComponentUpdate(nextProps: ListProps<Asset>) {
     if (Config.isRoku) return true;
@@ -75,7 +79,7 @@ export class List extends React.Component<ListProps<Asset>> {
   );
 
   renderMultipleItems = ({ item, index }: ListItemType<Asset[]>) => {
-    if (this.props.type === 'Discover') {
+    if (this.props.type === ListType.Featured) {
       return (
         <DiscoverContainer
           focusable={this.props.focusable}
@@ -87,7 +91,7 @@ export class List extends React.Component<ListProps<Asset>> {
       );
     }
 
-    if (this.props.type === 'Shows') {
+    if (this.props.type === ListType.Grid) {
       return (
         <TvContainer
           focusable={this.props.focusable}
@@ -104,7 +108,7 @@ export class List extends React.Component<ListProps<Asset>> {
   render() {
     const { data, type, name } = this.props;
 
-    if (['Discover', 'Shows'].includes(type!)) {
+    if ([ListType.Featured, ListType.Grid].includes(type!)) {
       return (
         <ListRef
           name={name}

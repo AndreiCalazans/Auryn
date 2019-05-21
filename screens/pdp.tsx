@@ -26,6 +26,7 @@ import { Config } from '../config';
 import { YoutubeApiActions } from '../actions/youtubeActions';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
+import { ListType } from '../components/list';
 
 interface PdpProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions | TmdbActionTypes> {
   isFocused: boolean;
@@ -140,6 +141,7 @@ class PDP extends React.Component<PdpProps> {
           />
           <List
             name="List-PDP"
+            type={ListType.SmallBackdrop}
             data={asset.similar}
             focusable={isFocused}
             onPressItem={this.onPressItem}

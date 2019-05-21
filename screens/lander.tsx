@@ -24,6 +24,7 @@ import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
 import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 import { ToggleButtonPress, ToggleButton } from '../components/toggleButton';
+import { ListType } from '../components/list';
 
 interface LanderProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes> {
     isFocused: boolean;
@@ -181,7 +182,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
     // null list is used for Roku
     const nullList = (
       <Composition source="Auryn_Container-NullList">
-        <List name="NullList" type="None" data={[]} focusable={false} />
+        <List name="NullList" type={ListType.None} data={[]} focusable={false} />
       </Composition>
     );
 
@@ -189,7 +190,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
       <Composition source="Auryn_Container-Discover" key="discover">
         <List
           name="Discover"
-          type="Discover"
+          type={ListType.Featured}
           data={discover}
           ref={this.lists[0]}
           focusable={isFocused && currentListIndex === 0}
@@ -200,7 +201,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
       <Composition source="Auryn_Container-Movies" key="movies">
         <List
           name="Movies"
-          type="Movies"
+          type={ListType.Poster}
           data={movies}
           ref={this.lists[1]}
           focusable={isFocused && currentListIndex === 1}
@@ -211,7 +212,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
       <Composition source="Auryn_Container-Shows" key="shows">
         <List
           name="Shows"
-          type="Shows"
+          type={ListType.Grid}
           data={tv}
           ref={this.lists[2]}
           focusable={isFocused && currentListIndex === 2}
@@ -222,7 +223,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
       <Composition source="Auryn_Container-Live" key="live">
         <List
           name="Live"
-          type="Live"
+          type={ListType.LargeBackdrop}
           data={movies.slice(0, 2)}
           ref={this.lists[3]}
           focusable={isFocused && currentListIndex === 3}

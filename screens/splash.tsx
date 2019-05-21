@@ -16,6 +16,9 @@ import { connect, DispatchProp } from 'react-redux';
 import { Config } from '../config';
 import { AnyAction } from 'redux';
 import { AurynAppState } from '../reducers';
+import { tmdbApiKey } from '../secrets';
+import { Error } from './error';
+
 
 interface SplashProps extends NavigationScreenProps, DispatchProp<AnyAction> {
   fetched: boolean;
@@ -42,6 +45,9 @@ class Splash extends React.Component<SplashProps> {
   }
 
   render() {
+    if (!tmdbApiKey)
+      return <Error text="Missing Tmdb API token, please add a token to secrets.ts"/>;
+
     return (
       <View style={styles.container}>
         <Composition source="Auryn_Splash">

@@ -7,7 +7,7 @@ Effects designer workflow integrated with a standard React using
 React-Navigation and React-Redux
 
   - **Technology stack**: Auryn requires the You.i Engine SDK and is built
-    using JavaScript with React Native’s JSX syntax and cross-platform C++.
+    using TypeScript with React Native’s JSX syntax and cross-platform C++.
   - **Platforms**: Auryn can be built to run on iOS, Android, tvOS, Android
     TV, Amazon Fire TV, Roku, Tizen, Xbox One, and PlayStation 4. Development
     can be done on macOS, Windows, or Linux.

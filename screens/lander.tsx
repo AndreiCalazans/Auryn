@@ -23,7 +23,7 @@ import { Config } from '../config';
 import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
 import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
-import { ToggleButtonPress } from '../components/toggleButton';
+import { ToggleButtonPress, ToggleButton } from '../components/toggleButton';
 
 interface LanderProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes> {
     isFocused: boolean;
@@ -39,13 +39,11 @@ interface LanderState {
 class Lander extends React.Component<LanderProps, LanderState> {
   state = { currentListIndex: 0 };
 
-  lists: React.RefObject<List>[] = Array(4).fill(React.createRef<List>());
+  lists = Array.from(Array(4)).map(() => React.createRef<List>());
 
   lastFocusItem = React.createRef<ButtonRef>();
 
   lastFocusNavItem = React.createRef<ButtonRef>();
-
-  navButtonNames: string[] = ['Discover', 'Movies', 'Shows', 'Live'];
 
   focusListener!: NavigationEventSubscription;
 
@@ -59,7 +57,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
 
   inTimeline = React.createRef<Timeline>();
 
-  menuButtons = React.createRef<ToggleGroup>();
+  menuButtons = Array.from(Array(4)).map(() => React.createRef<ToggleButton>());
 
   searchButton = React.createRef<ButtonRef>();
 
@@ -86,12 +84,12 @@ class Lander extends React.Component<LanderProps, LanderState> {
     });
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
 
-    if (this.menuButtons.current) FocusManager.focus(this.menuButtons.current.getButtonRef(0).current);
+    if (this.menuButtons[0].current) FocusManager.focus(this.menuButtons[0].current);
   }
 
   navigateBack = () => {
-    if (this.menuButtons.current)
-      FocusManager.focus(this.menuButtons.current.getButtonRef(this.state.currentListIndex).current);
+    if (this.menuButtons[this.state.currentListIndex].current)
+      FocusManager.focus(this.menuButtons[this.state.currentListIndex].current);
     return true;
   };
 
@@ -115,19 +113,19 @@ class Lander extends React.Component<LanderProps, LanderState> {
 
   scrollToViewByIndex: ToggleButtonPress = index => {
     if (!Config.isRoku) {
-      if (this.menuButtons.current) {
+      if (this.menuButtons[index].current) {
         for (let i = 0; i < this.lists.length; i++)
-        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(i).current, this.lists[index].current, 'down');
+        FocusManager.setNextFocus(this.menuButtons[i].current, this.lists[index].current, 'down');
       }
 
-      if (this.menuButtons.current
+      if (this.menuButtons[index].current
         && this.searchButton.current
         && this.profileButton.current
         && this.lists[index].current
       ) {
         FocusManager.setNextFocus(this.searchButton.current, this.lists[index].current, 'down');
         FocusManager.setNextFocus(this.profileButton.current, this.lists[index].current, 'down');
-        FocusManager.setNextFocus(this.lists[index].current, this.menuButtons.current.getButtonRef(index).current, 'up');
+        FocusManager.setNextFocus(this.lists[index].current, this.menuButtons[index].current, 'up');
       }
     }
 
@@ -148,10 +146,10 @@ class Lander extends React.Component<LanderProps, LanderState> {
 
     if (shouldChangeFocus === false || Config.isRoku || !ref.current) return;
 
-    if (this.menuButtons.current) {
-      FocusManager.setNextFocus(ref.current, this.menuButtons.current.getButtonRef(this.state.currentListIndex).current, 'up');
+    if (this.menuButtons[this.state.currentListIndex].current) {
+      FocusManager.setNextFocus(ref.current, this.menuButtons[this.state.currentListIndex].current, 'up');
       for (let index = 0; index < this.lists.length; index++)
-        FocusManager.setNextFocus(this.menuButtons.current.getButtonRef(index).current, ref.current, 'down');
+        FocusManager.setNextFocus(this.menuButtons[index].current, ref.current, 'down');
     }
 
     if (this.searchButton.current && this.profileButton.current) {
@@ -235,13 +233,12 @@ class Lander extends React.Component<LanderProps, LanderState> {
     ];
     return (
       <Composition source="Auryn_Lander">
-        <ToggleGroup
-          focusable={isFocused}
-          prefix="Btn-Nav-"
-          names={this.navButtonNames}
-          onPressItem={this.scrollToViewByIndex}
-          ref={this.menuButtons}
-        />
+        <ToggleGroup onPressItem={this.scrollToViewByIndex} initialToggleIndex={0}>
+          <ToggleButton name="Btn-Nav-Discover" focusable={isFocused} ref={this.menuButtons[0]} />
+          <ToggleButton name="Btn-Nav-Movies" focusable={isFocused} ref={this.menuButtons[1]} />
+          <ToggleButton name="Btn-Nav-Shows" focusable={isFocused} ref={this.menuButtons[2]} />
+          <ToggleButton name="Btn-Nav-Live" focusable={isFocused} ref={this.menuButtons[3]} />
+        </ToggleGroup>
         <ButtonRef
           name="Btn-Nav-Search"
           focusable={isFocused}

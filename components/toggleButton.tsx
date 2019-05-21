@@ -40,15 +40,10 @@ export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggl
 
   componentDidUpdate(prevProps: ToggleButtonProps) {
     if (this.props.toggled !== prevProps.toggled) {
-      this.setState(
-        { toggled: this.props.toggled },
-        () => {
-          if ((this.state.toggled || !Config.isRoku) && this.toggleOnTimeline.current)
-            this.toggleOnTimeline.current.play();
-          else if (this.toggleOffTimeline.current)
-            this.toggleOffTimeline.current.play();
-        },
-      );
+      if ((this.props.toggled || !Config.isRoku) && this.toggleOnTimeline.current)
+        this.toggleOnTimeline.current.play();
+      else if (this.toggleOffTimeline.current)
+        this.toggleOffTimeline.current.play();
     }
   }
 
@@ -58,8 +53,6 @@ export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggl
   };
 
   onPress = () => {
-    if (this.state.toggled && this.props.isRadio) return;
-
     if (this.props.onPress)
       this.props.onPress(this.props.index);
 
@@ -81,11 +74,11 @@ export class ToggleButton extends React.PureComponent<ToggleButtonProps, { toggl
       >
         <Timeline
           name="Toggle-On"
-          direction={this.state.toggled || Config.isRoku ? 'forward' : 'reverse'}
+          direction={this.props.toggled || Config.isRoku ? 'forward' : 'reverse'}
           ref={this.toggleOnTimeline}
-          playOnLoad={this.state.toggled}
+          playOnLoad={this.props.toggled}
         />
-        {Config.isRoku ? <Timeline name="Toggle-Off" direction={'forward'} ref={this.toggleOffTimeline} /> : null}
+        {Config.isRoku ? <Timeline name="Toggle-Off" ref={this.toggleOffTimeline} /> : null}
       </ButtonRef>
     );
 }

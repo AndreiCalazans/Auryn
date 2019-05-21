@@ -11,7 +11,6 @@ import { View, Image, StyleSheet, ImageURISource } from 'react-native';
 
 interface BackgroundImageProps {
   source: ImageURISource;
-  children: React.ReactChildren;
 }
 
 export const BackgroundImage: React.FunctionComponent<BackgroundImageProps> = ({ source, children }) => (

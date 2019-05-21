@@ -9,13 +9,11 @@
 import * as React from 'react';
 import { Composition, BackHandler, ButtonRef, TextRef, FocusManager } from '@youi/react-native-youi';
 import { Timeline, BackButton } from '../components';
-import { withNavigationFocus, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
+import { withNavigationFocus, NavigationEventSubscription, NavigationFocusInjectedProps } from 'react-navigation';
 import { NativeEventSubscription } from 'react-native';
 import { Config } from '../config';
 
-interface ProfileProps extends NavigationScreenProps {
-  isFocused: boolean;
-}
+type ProfileProps = NavigationFocusInjectedProps;
 
 interface ProfileState {
   activeButtonIndex: number;

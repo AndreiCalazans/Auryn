@@ -9,6 +9,7 @@
  /* eslint-disable complexity */
 import { fromApi, TmdbApi } from '../adapters/tmdbAdapter';
 import { TmdbReducerState, TmdbActionTypes } from '../typings/tmdbReduxTypes';
+import { Asset } from '../adapters/asset';
 
 const normalize = (array: TmdbApi[], length = 10, imagePath: 'poster' | 'backdrop' = 'backdrop') =>
   array.filter(asset => {
@@ -38,7 +39,7 @@ const initialState: TmdbReducerState = { // eslint-disable-line max-lines-per-fu
     error: null,
   },
   details: {
-    data: {},
+    data: {} as unknown as Asset,
     fetching: false,
     fetched: false,
     error: null,

@@ -8,17 +8,18 @@
 
 import * as React from 'react';
 import { Composition, BackHandler, TextInputRef, FocusManager } from '@youi/react-native-youi';
-import { tmdb } from '../actions';
 import { Timeline, List, BackButton } from '../components';
 import { NavigationActions, withNavigationFocus, NavigationEventSubscription, NavigationScreenProps } from 'react-navigation';
-import { connect, DispatchProp } from 'react-redux';
+import { connect } from 'react-redux';
 import { Asset, AssetType } from '../adapters/asset';
 import { NativeEventSubscription, View } from 'react-native';
 import { Config } from '../config';
-import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
+import { getDetailsByIdAndType, prefetchDetails, search } from '../actions/tmdbActions';
 
-interface SearchProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes>{
+type SearchDispatchProps = typeof mapDispatchToProps;
+
+interface SearchProps extends NavigationScreenProps, SearchDispatchProps {
   isFocused: boolean;
   data: { tv: Asset[]; movies: Asset[] };
 }
@@ -64,7 +65,7 @@ class Search extends React.Component<SearchProps> {
   }
 
   onPressItem = async (id: any, type: AssetType)  => {
-    this.props.dispatch(tmdb.getDetailsByIdAndType(id, type));
+    this.props.getDetailsByIdAndType(id, type);
     const navigateAction = NavigationActions.navigate({
       routeName: 'PDP',
       params: {
@@ -78,9 +79,9 @@ class Search extends React.Component<SearchProps> {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  onFocusItem = (id: any, type: AssetType) => this.props.dispatch(tmdb.prefetchDetails(id, type));
+  onFocusItem = (id: any, type: AssetType) => this.props.prefetchDetails(id, type);
 
-  search = (query: string) => this.props.dispatch(tmdb.search(query));
+  search = (query: string) => this.props.search(query);
 
   render() { // eslint-disable-line max-lines-per-function
     const { isFocused, data: { movies, tv } } = this.props;
@@ -128,8 +129,15 @@ class Search extends React.Component<SearchProps> {
   }
 }
 
-const mapStateToProps = (store: AurynAppState): SearchProps => ({
-  data: store.tmdbReducer.search.data,
+const mapStateToProps = (store: AurynAppState) => ({
+  data: store.tmdbReducer.search.data || { tv: [], movies: [] },
 });
-export default withNavigationFocus(connect(mapStateToProps)(Search));
+
+const mapDispatchToProps = {
+  getDetailsByIdAndType,
+  prefetchDetails,
+  search,
+};
+
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Search));
 export { Search as SearchTest };

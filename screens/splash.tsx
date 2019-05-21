@@ -10,17 +10,17 @@ import * as React from 'react';
 import { Composition, ViewRef } from '@youi/react-native-youi';
 import { View, StyleSheet } from 'react-native';
 import { Timeline } from '../components';
-import { tmdb } from '../actions';
 import { NavigationActions, NavigationScreenProps } from 'react-navigation';
-import { connect, DispatchProp } from 'react-redux';
+import { connect } from 'react-redux';
 import { Config } from '../config';
-import { AnyAction } from 'redux';
 import { AurynAppState } from '../reducers';
 import { tmdbApiKey } from '../secrets';
 import { Error } from './error';
+import { getDiscover, getMovies, getTv } from '../actions/tmdbActions';
 
+type SplashDispatchProps = typeof mapDispatchToProps;
 
-interface SplashProps extends NavigationScreenProps, DispatchProp<AnyAction> {
+interface SplashProps extends NavigationScreenProps, SplashDispatchProps {
   fetched: boolean;
 };
 
@@ -28,9 +28,9 @@ class Splash extends React.Component<SplashProps> {
   outTimeline: React.RefObject<Timeline> = React.createRef<Timeline>();
 
   componentDidMount() {
-    this.props.dispatch(tmdb.getDiscover());
-    this.props.dispatch(tmdb.getMovies());
-    this.props.dispatch(tmdb.getTv());
+    this.props.getDiscover();
+    this.props.getMovies();
+    this.props.getTv();
   }
 
   async componentDidUpdate() {
@@ -69,12 +69,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (store: AurynAppState): SplashProps => ({
+const mapStateToProps = (store: AurynAppState) => ({
   fetched:
-    store.tmdbReducer.discover.fetched
+    (store.tmdbReducer.discover.fetched
     && store.tmdbReducer.movies.fetched
-    && store.tmdbReducer.tv.fetched,
+    && store.tmdbReducer.tv.fetched) || false,
 });
 
-export default connect(mapStateToProps)(Splash);
+const mapDispatchToProps = {
+  getDiscover,
+  getMovies,
+  getTv,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Splash);
 export { Splash as SplashTest };

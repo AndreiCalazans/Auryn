@@ -18,17 +18,18 @@ import {
   FocusManager,
 } from '@youi/react-native-youi';
 import { View, NativeEventSubscription } from 'react-native';
-import { connect, DispatchProp } from 'react-redux';
+import { connect } from 'react-redux';
 import { Timeline, List, BackButton } from '../components';
-import { youtube, tmdb } from '../actions';
 import { Asset, AssetType } from '../adapters/asset';
 import { Config } from '../config';
-import { YoutubeApiActions } from '../actions/youtubeActions';
-import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
 import { ListType } from '../components/list';
+import { prefetchDetails, getDetailsByIdAndType } from '../actions/tmdbActions';
+import { getVideoSourceByYoutubeId } from '../actions/youtubeActions';
 
-interface PdpProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions | TmdbActionTypes> {
+type PdpDispatchProps = typeof mapDispatchToProps;
+
+interface PdpProps extends NavigationScreenProps, PdpDispatchProps {
   isFocused: boolean;
   asset: Asset;
   fetched: boolean;
@@ -66,14 +67,14 @@ class PDP extends React.Component<PdpProps> {
   }
 
   onPressItem = async (id: any, type: AssetType) => {
-    this.props.dispatch(tmdb.getDetailsByIdAndType(id, type));
+    this.props.getDetailsByIdAndType(id, type);
     if (this.contentOutTimeline.current) await this.contentOutTimeline.current.play();
     await this.props.navigation.navigate({ routeName: 'PDP', params: { id, type }, key: id });
     if (this.posterButton.current) FocusManager.focus(this.posterButton.current);
     if (this.contentInTimeline.current) this.contentInTimeline.current.play();
   }
 
-  onFocusItem = (id: any, type: AssetType) => this.props.dispatch(tmdb.prefetchDetails(id, type));
+  onFocusItem = (id: any, type: AssetType) => this.props.prefetchDetails(id, type);
 
   componentDidMount() {
 
@@ -113,7 +114,7 @@ class PDP extends React.Component<PdpProps> {
   }
 
   onFocusPoster = () => {
-    this.props.dispatch(youtube.getVideoSourceByYoutubeId(this.props.asset.youtubeId));
+    this.props.getVideoSourceByYoutubeId(this.props.asset.youtubeId);
   }
 
   onLoad = () => {
@@ -186,10 +187,16 @@ class PDP extends React.Component<PdpProps> {
   }
 }
 
-const mapStateToProps = (store: AurynAppState): PdpProps => ({
+const mapStateToProps = (store: AurynAppState) => ({
   asset: store.tmdbReducer.details.data,
   fetched: store.tmdbReducer.details.fetched,
 });
 
-export default withNavigationFocus(connect(mapStateToProps)(PDP));
+const mapDispatchToProps = {
+  getVideoSourceByYoutubeId,
+  prefetchDetails,
+  getDetailsByIdAndType,
+};
+
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(PDP));
 export { PDP as PdpTest };

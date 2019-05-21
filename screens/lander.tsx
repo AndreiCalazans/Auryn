@@ -16,17 +16,18 @@ import {
   NavigationScreenProps,
   NavigationEventSubscription,
 } from 'react-navigation';
-import { connect, DispatchProp } from 'react-redux';
-import { tmdb } from '../actions';
+import { connect } from 'react-redux';
 import { Asset } from '../adapters/asset';
 import { Config } from '../config';
-import { TmdbActionTypes } from '../typings/tmdbReduxTypes';
 import { AurynAppState } from '../reducers';
 import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 import { ToggleButtonPress, ToggleButton } from '../components/toggleButton';
 import { ListType } from '../components/list';
+import { prefetchDetails, getDetailsByIdAndType } from '../actions/tmdbActions';
 
-interface LanderProps extends NavigationScreenProps, DispatchProp<TmdbActionTypes> {
+type LanderDispatchProps = typeof mapDispatchToProps;
+
+interface LanderProps extends NavigationScreenProps, LanderDispatchProps {
     isFocused: boolean;
     tv: Asset[];
     discover: Asset[];
@@ -142,7 +143,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
 
   // eslint-disable-next-line max-params
   onFocusItem: ListItemFocusEvent = (id, type, ref, shouldChangeFocus) => {
-    this.props.dispatch(tmdb.prefetchDetails(id, type));
+    this.props.prefetchDetails(id, type);
     this.lastFocusItem = ref;
 
     if (shouldChangeFocus === false || Config.isRoku || !ref.current) return;
@@ -169,7 +170,7 @@ class Lander extends React.Component<LanderProps, LanderState> {
         type,
       },
     });
-    this.props.dispatch(tmdb.getDetailsByIdAndType(id, type));
+    this.props.getDetailsByIdAndType(id, type);
     if (this.outTimeline.current) await this.outTimeline.current.play();
     this.props.navigation.dispatch(navigateAction);
   };
@@ -283,5 +284,10 @@ const mapStateToProps = (store: AurynAppState) => ({
   tv: store.tmdbReducer.tv.data,
 });
 
-export default withNavigationFocus(connect(mapStateToProps)(Lander));
+const mapDispatchToProps = {
+  prefetchDetails,
+  getDetailsByIdAndType,
+};
+
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Lander));
 export { Lander as LanderTest };

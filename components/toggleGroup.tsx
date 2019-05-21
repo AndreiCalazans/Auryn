@@ -22,9 +22,10 @@ export class ToggleGroup extends React.PureComponent<ToggleGroupProps, { activeB
 
   render() {
     // eslint-disable-next-line consistent-return
-    return React.Children.map(this.props.children, (child: React.ReactElement<ToggleButtonProps>, index) => {
-      if (child.type === ToggleButton) {
-        return React.cloneElement(child, {
+    return React.Children.map(this.props.children, (child, index) => {
+      const typedChild = child as React.ReactElement<ToggleButtonProps>;
+      if (typedChild.type === ToggleButton) {
+        return React.cloneElement(typedChild, {
           onPress: () => {
             this.initialToggleIndex = -1;
             if (this.state.activeButtonIndex === index) return;
@@ -33,8 +34,8 @@ export class ToggleGroup extends React.PureComponent<ToggleGroupProps, { activeB
 
             if (this.props.onPressItem)
               this.props.onPressItem(index);
-             else if (child.props.onPress)
-              child.props.onPress(index);
+             else if (typedChild.props.onPress)
+             typedChild.props.onPress(index);
           },
           toggled: this.initialToggleIndex === index || this.state.activeButtonIndex === index,
         });

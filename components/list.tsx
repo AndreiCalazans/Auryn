@@ -68,6 +68,8 @@ export class List extends React.Component<ListProps<Asset>> {
     index,
   });
 
+  keyExtractor = (_item: Asset[], index: number) => index.toString();
+
   renderItem = ({ item }: ListItemType<Asset>) => (
     <ListItem
       focusable={this.props.focusable}
@@ -118,6 +120,7 @@ export class List extends React.Component<ListProps<Asset>> {
           getItemLayout={this.getItemLayout}
           renderItem={this.renderMultipleItems}
           extraData={this.props.focusable}
+          keyExtractor={this.keyExtractor}
         />
       );
     }

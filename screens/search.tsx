@@ -16,6 +16,7 @@ import { NativeEventSubscription, View } from 'react-native';
 import { Config } from '../config';
 import { AurynAppState } from '../reducers';
 import { getDetailsByIdAndType, prefetchDetails, search } from '../actions/tmdbActions';
+import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 
 type SearchDispatchProps = typeof mapDispatchToProps;
 
@@ -64,7 +65,7 @@ class Search extends React.Component<SearchProps> {
     return true;
   }
 
-  onPressItem = async (id: any, type: AssetType)  => {
+  onPressItem: ListItemPressEvent = async (id: any, type: AssetType) => {
     this.props.getDetailsByIdAndType(id, type);
     const navigateAction = NavigationActions.navigate({
       routeName: 'PDP',
@@ -79,7 +80,9 @@ class Search extends React.Component<SearchProps> {
     this.props.navigation.dispatch(navigateAction);
   }
 
-  onFocusItem = (id: any, type: AssetType) => this.props.prefetchDetails(id, type);
+  onFocusItem: ListItemFocusEvent = (id: any, type: AssetType) => {
+    this.props.prefetchDetails(id, type);
+  };
 
   search = (query: string) => this.props.search(query);
 
@@ -139,5 +142,5 @@ const mapDispatchToProps = {
   search,
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Search));
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Search as any));
 export { Search as SearchTest };

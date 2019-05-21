@@ -106,8 +106,10 @@ class Lander extends React.Component<LanderProps, LanderState> {
       routeName: screen,
     });
 
-    if (screen === 'Search' && this.searchButton.current) this.lastFocusNavItem = this.searchButton;
-    else if (screen === 'Profile' && this.profileButton.current) this.lastFocusNavItem = this.profileButton;
+    if (screen === 'Search')
+      this.lastFocusNavItem = this.searchButton;
+    else if (screen === 'Profile')
+      this.lastFocusNavItem = this.profileButton;
 
     if (this.outTimeline.current) await this.outTimeline.current.play();
     this.props.navigation.dispatch(navigateAction);
@@ -162,7 +164,6 @@ class Lander extends React.Component<LanderProps, LanderState> {
 
   onPressItem: ListItemPressEvent = async (id, type, ref) => {
     this.lastFocusItem = ref;
-    this.lastFocusNavItem = null;
     const navigateAction = NavigationActions.navigate({
       routeName: 'PDP',
       params: {
@@ -289,5 +290,5 @@ const mapDispatchToProps = {
   getDetailsByIdAndType,
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Lander));
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Lander as any));
 export { Lander as LanderTest };

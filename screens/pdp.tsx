@@ -26,6 +26,7 @@ import { AurynAppState } from '../reducers';
 import { ListType } from '../components/list';
 import { prefetchDetails, getDetailsByIdAndType } from '../actions/tmdbActions';
 import { getVideoSourceByYoutubeId } from '../actions/youtubeActions';
+import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 
 type PdpDispatchProps = typeof mapDispatchToProps;
 
@@ -66,7 +67,7 @@ class PDP extends React.Component<PdpProps> {
     return true;
   }
 
-  onPressItem = async (id: any, type: AssetType) => {
+  onPressItem: ListItemPressEvent = async (id: any, type: AssetType) => {
     this.props.getDetailsByIdAndType(id, type);
     if (this.contentOutTimeline.current) await this.contentOutTimeline.current.play();
     await this.props.navigation.navigate({ routeName: 'PDP', params: { id, type }, key: id });
@@ -74,7 +75,9 @@ class PDP extends React.Component<PdpProps> {
     if (this.contentInTimeline.current) this.contentInTimeline.current.play();
   }
 
-  onFocusItem = (id: any, type: AssetType) => this.props.prefetchDetails(id, type);
+  onFocusItem: ListItemFocusEvent = (id: any, type: AssetType) => {
+    this.props.prefetchDetails(id, type);
+  }
 
   componentDidMount() {
 
@@ -198,5 +201,5 @@ const mapDispatchToProps = {
   getDetailsByIdAndType,
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(PDP));
+export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(PDP as any));
 export { PDP as PdpTest };

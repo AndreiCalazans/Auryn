@@ -82,5 +82,5 @@ const mapDispatchToProps = {
   getTv,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Splash);
+export default connect(mapStateToProps, mapDispatchToProps)(Splash as any);
 export { Splash as SplashTest };

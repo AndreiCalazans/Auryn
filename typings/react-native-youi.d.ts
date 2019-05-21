@@ -6,7 +6,7 @@
 /* eslint-disable max-lines */
 declare module '@youi/react-native-youi' {
   import * as React from 'react';
-  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription, NativeSyntheticEvent } from 'react-native';
+  import { TextInputProps, TextStyle, ScrollViewProps, NativeEventSubscription, NativeSyntheticEvent, ScrollView } from 'react-native';
 
   export interface BackHandlerConstructor {
     exitApp: () => void;
@@ -459,7 +459,9 @@ declare module '@youi/react-native-youi' {
 
   export class ListRef<T> extends React.Component<ListRefProps<T> & RefProps> {}
 
-  export class ScrollRef extends React.Component<RefProps & ScrollViewProps> {}
+  export class ScrollRef extends React.Component<RefProps & ScrollViewProps> {
+    scrollTo(arg0: { x: number; y: number; animated: boolean }): void;
+}
 
   export interface TimelineRef {
     /**

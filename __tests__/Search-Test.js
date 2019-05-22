@@ -8,6 +8,9 @@
 
 import React from 'react';
 import { SearchTest } from '../screens/search';
+import { Provider } from 'react-redux';
+import store from '../store';
+
 import renderer from 'react-test-renderer';
 
 const data = {
@@ -16,6 +19,8 @@ const data = {
 };
 
 test('renders correctly', () => {
-  const tree = renderer.create(<SearchTest navigation={global.navigation} dispatch={jest.fn()} data={data} />).toJSON();
+  const tree = renderer.create(<Provider store={store}>
+    <SearchTest navigation={global.navigation} dispatch={jest.fn()} data={data} />
+  </Provider>).toJSON();
   expect(tree).toMatchSnapshot();
 });

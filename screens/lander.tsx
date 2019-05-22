@@ -13,8 +13,8 @@ import { Timeline, ToggleGroup, List } from '../components';
 import {
   withNavigationFocus,
   NavigationActions,
-  NavigationScreenProps,
   NavigationEventSubscription,
+  NavigationFocusInjectedProps,
 } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Asset } from '../adapters/asset';
@@ -27,8 +27,7 @@ import { prefetchDetails, getDetailsByIdAndType } from '../actions/tmdbActions';
 
 type LanderDispatchProps = typeof mapDispatchToProps;
 
-interface LanderProps extends NavigationScreenProps, LanderDispatchProps {
-    isFocused: boolean;
+interface LanderProps extends NavigationFocusInjectedProps, LanderDispatchProps {
     tv: Asset[];
     discover: Asset[];
     movies: Asset[];

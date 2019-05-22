@@ -8,6 +8,8 @@
 
 import React from 'react';
 import { LanderTest } from '../screens/lander';
+import { Provider } from 'react-redux';
+import store from '../store';
 
 import renderer from 'react-test-renderer';
 
@@ -19,6 +21,8 @@ const data = {
 };
 
 test('renders correctly', () => {
-  const tree = renderer.create(<LanderTest navigation={global.navigation} dispatch={jest.fn()} {...data}/>).toJSON();
+  const tree = renderer.create(<Provider store={store}>
+    <LanderTest navigation={global.navigation} dispatch={jest.fn()} {...data}/>
+  </Provider>).toJSON();
   expect(tree).toMatchSnapshot();
 });

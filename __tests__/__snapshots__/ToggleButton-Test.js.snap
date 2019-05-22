@@ -26,6 +26,7 @@ exports[`renders correctly 1`] = `
     onStarted={[Function]}
     onStartedForward={[Function]}
     onStartedReverse={[Function]}
+    playOnLoad={false}
   />
 </YiPushButtonView>
 `;

@@ -15,7 +15,6 @@ import {
   NavigationEventSubscription,
   NavigationFocusInjectedProps,
 } from 'react-navigation';
-import {} from 'redux-thunk';
 import { connect } from 'react-redux';
 import { AssetType } from '../adapters/asset';
 import { NativeEventSubscription, View } from 'react-native';

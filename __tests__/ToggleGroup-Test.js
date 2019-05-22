@@ -7,13 +7,15 @@
  */
 
 import React from 'react';
-import { ToggleGroup } from '../components';
+import { ToggleGroup, ToggleButton } from '../components';
 
 import renderer from 'react-test-renderer';
 
-const names = ['Button1', 'Button2', 'Button3'];
-
 test('renders correctly', () => {
-  const tree = renderer.create(<ToggleGroup names={names}/>).toJSON();
+  const tree = renderer.create(<ToggleGroup>
+      <ToggleButton/>
+      <ToggleButton/>
+      <ToggleButton/>
+    </ToggleGroup>).toJSON();
   expect(tree).toMatchSnapshot();
 });

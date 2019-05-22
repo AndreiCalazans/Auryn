@@ -17,7 +17,6 @@ test('renders correctly', () => {
   const tree = renderer.create(<VideoTest
       asset={asset}
       navigation={global.navigation}
-      dispatch={jest.fn()}
     />).toJSON();
   expect(tree).toMatchSnapshot();
 });

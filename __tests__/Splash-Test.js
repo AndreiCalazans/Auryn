@@ -15,11 +15,9 @@ import renderer from 'react-test-renderer';
 
 test('renders correctly', () => {
   const tree = renderer
-    .create(
-      <Provider store={store}>
+    .create(<Provider store={store}>
         <SplashTest navigation={global.navigation} />
-      </Provider>,
-    )
+      </Provider>,)
     .toJSON();
 
   expect(tree).toMatchSnapshot();

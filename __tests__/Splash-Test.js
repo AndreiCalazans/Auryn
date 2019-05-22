@@ -7,11 +7,20 @@
  */
 
 import React from 'react';
-import { SplashTest } from '../screens/splash';
+import { Provider } from 'react-redux';
+import SplashTest from '../screens/splash';
+import store from '../store';
 
 import renderer from 'react-test-renderer';
 
 test('renders correctly', () => {
-  const tree = renderer.create(<SplashTest navigation={global.navigation} dispatch={jest.fn()}/>).toJSON();
+  const tree = renderer
+    .create(
+      <Provider store={store}>
+        <SplashTest navigation={global.navigation} />
+      </Provider>,
+    )
+    .toJSON();
+
   expect(tree).toMatchSnapshot();
 });

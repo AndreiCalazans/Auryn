@@ -289,11 +289,11 @@ class Video extends React.Component<VideoProps, VideoState> {
   }
 }
 
-const mapStateToProps = (store: AurynAppState): VideoProps => ({
-  videoSource: store.youtubeReducer.videoSource,
-  asset: store.tmdbReducer.details.data,
-  fetched: store.youtubeReducer.fetched,
+const mapStateToProps = (store: AurynAppState) => ({
+  videoSource: store.youtubeReducer.videoSource || { uri: '', type: '' },
+  asset: store.tmdbReducer.details.data || {},
+  fetched: store.youtubeReducer.fetched || false,
 });
 
-export default withNavigationFocus(connect(mapStateToProps)(Video));
+export default withNavigationFocus(connect(mapStateToProps)(Video as any));
 export { Video as VideoTest };

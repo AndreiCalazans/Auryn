@@ -6,7 +6,7 @@
  *
  */
 
- /* eslint-disable max-len */
+/* eslint-disable max-len */
 
 import { tmdbApiKey } from '../secrets';
 import { Dispatch } from 'redux';
@@ -22,36 +22,54 @@ export const getDiscover = () => (dispatch: Dispatch<TmdbActionTypes>) => {
 
   dispatch({
     type: 'TMDB_DISCOVER',
-    payload: fetch(`http://api.themoviedb.org/3/discover/movie?api_key=${tmdbApiKey}&with_original_language=en&with_genres=${familyFilter ? familyGenre : ''}`)
-      .then(response => response.json())
-      .then(json => {
+    payload: fetch(
+      `http://api.themoviedb.org/3/discover/movie?api_key=${tmdbApiKey}&with_original_language=en&with_genres=${
+        familyFilter ? familyGenre : ''
+      }`,
+    )
+      .then((response) => response.json())
+      .then((json) => {
         movies = json.results.slice(0, 12);
-        return fetch(`http://api.themoviedb.org/3/discover/tv?api_key=${tmdbApiKey}&with_original_language=en&with_genres=${familyFilter ? familyGenre : ''}`);
+        return fetch(
+          `http://api.themoviedb.org/3/discover/tv?api_key=${tmdbApiKey}&with_original_language=en&with_genres=${
+            familyFilter ? familyGenre : ''
+          }`,
+        );
       })
-      .then(response => response.json())
-      .then(tv => ({ results: movies.concat(tv.results.slice(0, 12)).sort(() => 0.5 - Math.random()) })),
+      .then((response) => response.json())
+      .then((tv) => ({ results: movies.concat(tv.results.slice(0, 12)).sort(() => 0.5 - Math.random()) })),
   });
 };
 
-export const getMovies = () => (dispatch: Dispatch) => dispatch({
-  type: 'TMDB_MOVIES',
-  payload: fetch(`http://api.themoviedb.org/3/movie/popular?api_key=${tmdbApiKey}&with_original_language=en`)
-    .then(response => response.json()),
-});
+export const getMovies = () => (dispatch: Dispatch) =>
+  dispatch({
+    type: 'TMDB_MOVIES',
+    payload: fetch(`http://api.themoviedb.org/3/movie/popular?api_key=${tmdbApiKey}&with_original_language=en`).then(
+      (response) => response.json(),
+    ),
+  });
 
-export const getTv = () => (dispatch: Dispatch) => dispatch({
-  type: 'TMDB_TV',
-  payload: fetch(`http://api.themoviedb.org/3/tv/popular?api_key=${tmdbApiKey}&with_original_language=en`)
-    .then(response => response.json()),
-});
+export const getTv = () => (dispatch: Dispatch) =>
+  dispatch({
+    type: 'TMDB_TV',
+    payload: fetch(`http://api.themoviedb.org/3/tv/popular?api_key=${tmdbApiKey}&with_original_language=en`).then(
+      (response) => response.json(),
+    ),
+  });
 
-export const prefetchDetails = (id: number | string, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
-  const { tmdbReducer: { cache: { data, fetching } } } = getState();
+export const prefetchDetails: (id: number | string, type: AssetType) => any = (id, type) => (
+  dispatch: Dispatch,
+  getState: () => TmdbStore,
+) => {
+  const {
+    tmdbReducer: {
+      cache: { data, fetching },
+    },
+  } = getState();
 
-  if (fetching || !data)
-    return dispatch({ type: 'NOOP' });
+  if (fetching || !data) return dispatch({ type: 'NOOP' });
 
-  const cachedPayload = data.find(it => it && (it.id === id && it.type === type));
+  const cachedPayload = data.find((it) => it && (it.id === id && it.type === type));
   if (cachedPayload) {
     return dispatch({
       type: 'TMDB_CACHE',
@@ -67,18 +85,27 @@ export const prefetchDetails = (id: number | string, type: AssetType) => (dispat
         key: 'CACHE_DETAILS',
       },
     },
-    payload: fetch(`http://api.themoviedb.org/3/${type}/${id}?append_to_response=similar,videos,credits&api_key=${tmdbApiKey}`)
-      .then(response => response.json())
-      .then(json => {
+    payload: fetch(
+      `http://api.themoviedb.org/3/${type}/${id}?append_to_response=similar,videos,credits&api_key=${tmdbApiKey}`,
+    )
+      .then((response) => response.json())
+      .then((json) => {
         json.type = type;
         return json;
       }),
   });
 };
 
-export const getDetailsByIdAndType = (id: number | string, type: AssetType) => (dispatch: Dispatch, getState: () => TmdbStore) => {
-  const { tmdbReducer: { cache: { data } } } = getState();
-  const cachedPayload = (data as TmdbApi[]).find(it => it.id === id && it.type === type);
+export const getDetailsByIdAndType: (id: number | string, type: AssetType) => any = (id, type) => (
+  dispatch: Dispatch,
+  getState: () => TmdbStore,
+) => {
+  const {
+    tmdbReducer: {
+      cache: { data },
+    },
+  } = getState();
+  const cachedPayload = (data as TmdbApi[]).find((it) => it.id === id && it.type === type);
   if (cachedPayload) {
     return dispatch({
       type: 'TMDB_DETAILS',
@@ -88,18 +115,19 @@ export const getDetailsByIdAndType = (id: number | string, type: AssetType) => (
 
   return dispatch({
     type: 'TMDB_DETAILS',
-    payload: fetch(`http://api.themoviedb.org/3/${type}/${id}?append_to_response=similar,videos,credits&api_key=${tmdbApiKey}`)
-      .then(response => response.json())
-      .then(json => {
+    payload: fetch(
+      `http://api.themoviedb.org/3/${type}/${id}?append_to_response=similar,videos,credits&api_key=${tmdbApiKey}`,
+    )
+      .then((response) => response.json())
+      .then((json) => {
         json.type = type;
         return json;
       }),
   });
 };
 
-export const search = (query: string) => (dispatch: Dispatch) => {
-  if (query === '')
-    return dispatch({ type: 'TMDB_SEARCH_CLEAR' });
+export const search: (query: string) => any = (query) => (dispatch: Dispatch) => {
+  if (query === '') return dispatch({ type: 'TMDB_SEARCH_CLEAR' });
 
   return dispatch({
     type: 'TMDB_SEARCH',
@@ -108,7 +136,8 @@ export const search = (query: string) => (dispatch: Dispatch) => {
         time: 500,
       },
     },
-    payload: fetch(`http://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&api_key=${tmdbApiKey}`)
-      .then(response => response.json()),
-    });
+    payload: fetch(
+      `http://api.themoviedb.org/3/search/multi?query=${encodeURIComponent(query)}&api_key=${tmdbApiKey}`,
+    ).then((response) => response.json()),
+  });
 };

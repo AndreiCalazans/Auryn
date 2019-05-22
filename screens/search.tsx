@@ -9,21 +9,30 @@
 import * as React from 'react';
 import { Composition, BackHandler, TextInputRef, FocusManager } from '@youi/react-native-youi';
 import { Timeline, List, BackButton } from '../components';
-import { NavigationActions, withNavigationFocus, NavigationEventSubscription, NavigationScreenProps } from 'react-navigation';
+import {
+  NavigationActions,
+  withNavigationFocus,
+  NavigationEventSubscription,
+  NavigationFocusInjectedProps,
+} from 'react-navigation';
+import {} from 'redux-thunk';
 import { connect } from 'react-redux';
-import { Asset, AssetType } from '../adapters/asset';
+import { AssetType } from '../adapters/asset';
 import { NativeEventSubscription, View } from 'react-native';
 import { Config } from '../config';
 import { AurynAppState } from '../reducers';
 import { getDetailsByIdAndType, prefetchDetails, search } from '../actions/tmdbActions';
 import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 
-type SearchDispatchProps = typeof mapDispatchToProps;
+type SearchDispatchProps = {
+  getDetailsByIdAndType: typeof getDetailsByIdAndType;
+  prefetchDetails: typeof prefetchDetails;
+  search: typeof search;
+};
 
-interface SearchProps extends NavigationScreenProps, SearchDispatchProps {
-  isFocused: boolean;
-  data: { tv: Asset[]; movies: Asset[] };
-}
+type ReduxMappedState = ReturnType<typeof mapStateToProps>;
+
+type SearchProps = SearchDispatchProps & ReduxMappedState & NavigationFocusInjectedProps;
 
 class Search extends React.Component<SearchProps> {
   focusListener!: NavigationEventSubscription;
@@ -42,8 +51,7 @@ class Search extends React.Component<SearchProps> {
     });
     this.blurListener = this.props.navigation.addListener('didBlur', () => this.backHandlerListener.remove());
 
-    if (this.searchTextInput.current)
-      FocusManager.focus(this.searchTextInput.current);
+    if (this.searchTextInput.current) FocusManager.focus(this.searchTextInput.current);
   }
 
   componentWillUnmount() {
@@ -53,17 +61,14 @@ class Search extends React.Component<SearchProps> {
   }
 
   navigateBack = async () => {
-    if (this.outTimeline.current)
-      await this.outTimeline.current.play();
+    if (this.outTimeline.current) await this.outTimeline.current.play();
 
-    if (Config.isRoku)
-      this.props.navigation.navigate({ routeName: 'Lander' });
-    else
-      this.props.navigation.goBack(null);
+    if (Config.isRoku) this.props.navigation.navigate({ routeName: 'Lander' });
+    else this.props.navigation.goBack(null);
 
     this.search('');
     return true;
-  }
+  };
 
   onPressItem: ListItemPressEvent = async (id: any, type: AssetType) => {
     this.props.getDetailsByIdAndType(id, type);
@@ -75,10 +80,9 @@ class Search extends React.Component<SearchProps> {
       },
       key: id,
     });
-    if (this.outTimeline.current)
-      await this.outTimeline.current.play();
+    if (this.outTimeline.current) await this.outTimeline.current.play();
     this.props.navigation.dispatch(navigateAction);
-  }
+  };
 
   onFocusItem: ListItemFocusEvent = (id: any, type: AssetType) => {
     this.props.prefetchDetails(id, type);
@@ -86,26 +90,22 @@ class Search extends React.Component<SearchProps> {
 
   search = (query: string) => this.props.search(query);
 
-  render() { // eslint-disable-line max-lines-per-function
-    const { isFocused, data: { movies, tv } } = this.props;
+  render() {
+    // eslint-disable-line max-lines-per-function
+    const {
+      isFocused,
+      data: { movies, tv },
+    } = this.props;
 
-    if (!isFocused)
-      return <View />;
+    if (!isFocused) return <View />;
 
     return (
       <Composition source="Auryn_Search">
-        <BackButton
-          focusable={this.props.isFocused}
-          onPress={this.navigateBack}
-        />
-        <TextInputRef
-          ref={this.searchTextInput}
-          name="TextInput"
-          secureTextEntry={false}
-          onChangeText={this.search}
-        />
+        <BackButton focusable={this.props.isFocused} onPress={this.navigateBack} />
+        <TextInputRef ref={this.searchTextInput} name="TextInput" secureTextEntry={false} onChangeText={this.search} />
 
-        {tv || !Config.isRoku ? <List
+        {tv || !Config.isRoku ? (
+          <List
             name="List-PDP"
             data={tv}
             focusable={isFocused}
@@ -113,20 +113,20 @@ class Search extends React.Component<SearchProps> {
             onFocusItem={this.onFocusItem}
             extraData={tv}
           />
-          : null
-        }
-        {movies || !Config.isRoku ? <List
-          name="List-Movies"
-          data={movies}
-          focusable={isFocused}
-          onPressItem={this.onPressItem}
-          onFocusItem={this.onFocusItem}
-          extraData={movies}
-        />
-        : null}
+        ) : null}
+        {movies || !Config.isRoku ? (
+          <List
+            name="List-Movies"
+            data={movies}
+            focusable={isFocused}
+            onPressItem={this.onPressItem}
+            onFocusItem={this.onFocusItem}
+            extraData={movies}
+          />
+        ) : null}
 
         <Timeline name="SearchOut" ref={this.outTimeline} />
-        <Timeline name="SearchIn" playOnLoad/>
+        <Timeline name="SearchIn" playOnLoad />
       </Composition>
     );
   }
@@ -142,5 +142,10 @@ const mapDispatchToProps = {
   search,
 };
 
-export default withNavigationFocus(connect(mapStateToProps, mapDispatchToProps)(Search as any));
+export default withNavigationFocus(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(Search),
+);
 export { Search as SearchTest };

@@ -7,7 +7,7 @@
  */
 
 import * as React from 'react';
-import { withNavigationFocus, NavigationActions, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
+import { withNavigationFocus, NavigationActions, NavigationEventSubscription, NavigationFocusInjectedProps } from 'react-navigation';
 import {
   BackHandler,
   ButtonRef,
@@ -30,8 +30,7 @@ import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 
 type PdpDispatchProps = typeof mapDispatchToProps;
 
-interface PdpProps extends NavigationScreenProps, PdpDispatchProps {
-  isFocused: boolean;
+interface PdpProps extends NavigationFocusInjectedProps, PdpDispatchProps {
   asset: Asset;
   fetched: boolean;
 }

@@ -1,4 +1,6 @@
 module.exports = {
+  automock: false,
+  setupFiles: ['./jest-setup.js'],
   preset: '@youi/react-native-youi',
   transform: {
     '^.+\\.jsx?$': '<rootDir>/node_modules/babel-jest',

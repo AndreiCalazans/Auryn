@@ -30,6 +30,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={true}
     />
   </YiPushButtonView>
   <YiPushButtonView
@@ -57,6 +58,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </YiPushButtonView>
   <YiPushButtonView
@@ -84,6 +86,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </YiPushButtonView>
   <YiPushButtonView
@@ -111,6 +114,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </YiPushButtonView>
   <YiPushButtonView
@@ -143,6 +147,7 @@ exports[`renders correctly 1`] = `
     onStarted={[Function]}
     onStartedForward={[Function]}
     onStartedReverse={[Function]}
+    playOnLoad={false}
   />
   <TimelineRef
     direction="forward"
@@ -162,6 +167,7 @@ exports[`renders correctly 1`] = `
     onStarted={[Function]}
     onStartedForward={[Function]}
     onStartedReverse={[Function]}
+    playOnLoad={false}
   />
   <ListRef
     DEPRECATED_sendUpdatedChildFrames={false}
@@ -559,6 +565,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
     <TimelineRef
       direction="forward"
@@ -578,6 +585,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </ViewRef>
   <ViewRef
@@ -603,6 +611,7 @@ exports[`renders correctly 1`] = `
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </ViewRef>
 </Composition>

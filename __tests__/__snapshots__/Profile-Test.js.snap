@@ -10,7 +10,7 @@ exports[`renders correctly 1`] = `
     onLoad={[Function]}
     onPress={[Function]}
     onTimelinesLoaded={[Function]}
-    visible={true}
+    visible={false}
   />
   <TimelineRef
     direction="forward"
@@ -30,6 +30,7 @@ exports[`renders correctly 1`] = `
     onStarted={[Function]}
     onStartedForward={[Function]}
     onStartedReverse={[Function]}
+    playOnLoad={true}
   />
   <TimelineRef
     direction="forward"
@@ -49,6 +50,7 @@ exports[`renders correctly 1`] = `
     onStarted={[Function]}
     onStartedForward={[Function]}
     onStartedReverse={[Function]}
+    playOnLoad={false}
   />
   <YiPushButtonView
     name="Btn-Profile1"

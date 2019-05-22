@@ -8,15 +8,20 @@
 
 import React from 'react';
 import { PdpTest } from '../screens/pdp';
-import renderer from 'react-test-renderer';
+import { Provider } from 'react-redux';
+import store from '../store';
 import { fromApi } from '../adapters/dummyAdapter';
+
+import renderer from 'react-test-renderer';
 
 const asset = fromApi(false);
 
 test('renders correctly', () => {
-  const tree = renderer.create(<PdpTest asset={asset}
-    navigation={global.navigation}
-    dispatch={jest.fn()}
-  />).toJSON();
+  const tree = renderer.create(<Provider store={store}>
+    <PdpTest asset={asset}
+      navigation={global.navigation}
+      dispatch={jest.fn()}
+    />
+  </Provider>).toJSON();
   expect(tree).toMatchSnapshot();
 });

@@ -3,34 +3,6 @@
 exports[`renders correctly 1`] = `
 Array [
   <YiPushButtonView
-    name="Button1"
-    onFocus={[Function]}
-    onLoad={[Function]}
-    onPress={[Function]}
-    onTimelinesLoaded={[Function]}
-  >
-    <TimelineRef
-      direction="forward"
-      loop={false}
-      name="Toggle-On"
-      onAborted={[Function]}
-      onCompleted={[Function]}
-      onCompletedForward={[Function]}
-      onCompletedReverse={[Function]}
-      onLoad={[Function]}
-      onPaused={[Function]}
-      onPausedForward={[Function]}
-      onPausedReverse={[Function]}
-      onPlay={[Function]}
-      onPlayForward={[Function]}
-      onPlayReverse={[Function]}
-      onStarted={[Function]}
-      onStartedForward={[Function]}
-      onStartedReverse={[Function]}
-    />
-  </YiPushButtonView>,
-  <YiPushButtonView
-    name="Button2"
     onFocus={[Function]}
     onLoad={[Function]}
     onPress={[Function]}
@@ -54,10 +26,10 @@ Array [
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </YiPushButtonView>,
   <YiPushButtonView
-    name="Button3"
     onFocus={[Function]}
     onLoad={[Function]}
     onPress={[Function]}
@@ -81,6 +53,34 @@ Array [
       onStarted={[Function]}
       onStartedForward={[Function]}
       onStartedReverse={[Function]}
+      playOnLoad={false}
+    />
+  </YiPushButtonView>,
+  <YiPushButtonView
+    onFocus={[Function]}
+    onLoad={[Function]}
+    onPress={[Function]}
+    onTimelinesLoaded={[Function]}
+  >
+    <TimelineRef
+      direction="reverse"
+      loop={false}
+      name="Toggle-On"
+      onAborted={[Function]}
+      onCompleted={[Function]}
+      onCompletedForward={[Function]}
+      onCompletedReverse={[Function]}
+      onLoad={[Function]}
+      onPaused={[Function]}
+      onPausedForward={[Function]}
+      onPausedReverse={[Function]}
+      onPlay={[Function]}
+      onPlayForward={[Function]}
+      onPlayReverse={[Function]}
+      onStarted={[Function]}
+      onStartedForward={[Function]}
+      onStartedReverse={[Function]}
+      playOnLoad={false}
     />
   </YiPushButtonView>,
 ]

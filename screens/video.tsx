@@ -10,15 +10,13 @@ import * as React from 'react';
 import { Composition, ViewRef, VideoRef, ButtonRef, TextRef, Input, FocusManager, BackHandler, VideoUriSource, InputEventObject } from '@youi/react-native-youi';
 import { View, NativeEventSubscription, NativeSyntheticEvent } from 'react-native';
 import { Timeline, ToggleButton, BackButton } from '../components';
-import { withNavigationFocus, NavigationScreenProps, NavigationEventSubscription } from 'react-navigation';
-import { connect, DispatchProp } from 'react-redux';
+import { withNavigationFocus, NavigationEventSubscription, NavigationFocusInjectedProps } from 'react-navigation';
+import { connect } from 'react-redux';
 import { Config } from '../config';
 import { Asset } from '../adapters/asset';
-import { YoutubeApiActions } from '../actions/youtubeActions';
 import { AurynAppState } from '../reducers/index';
 
-interface VideoProps extends NavigationScreenProps, DispatchProp<YoutubeApiActions> {
-  isFocused: boolean;
+interface VideoProps extends NavigationFocusInjectedProps {
   asset: Asset;
   fetched: boolean;
   videoSource: VideoUriSource;
@@ -289,11 +287,11 @@ class Video extends React.Component<VideoProps, VideoState> {
   }
 }
 
-const mapStateToProps = (store: AurynAppState): VideoProps => ({
-  videoSource: store.youtubeReducer.videoSource,
-  asset: store.tmdbReducer.details.data,
-  fetched: store.youtubeReducer.fetched,
+const mapStateToProps = (store: AurynAppState) => ({
+  videoSource: store.youtubeReducer.videoSource || { uri: '', type: '' },
+  asset: store.tmdbReducer.details.data || {},
+  fetched: store.youtubeReducer.fetched || false,
 });
 
-export default withNavigationFocus(connect(mapStateToProps)(Video));
+export default withNavigationFocus(connect(mapStateToProps)(Video as any));
 export { Video as VideoTest };

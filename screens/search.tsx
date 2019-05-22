@@ -9,7 +9,7 @@
 import * as React from 'react';
 import { Composition, BackHandler, TextInputRef, FocusManager } from '@youi/react-native-youi';
 import { Timeline, List, BackButton } from '../components';
-import { NavigationActions, withNavigationFocus, NavigationEventSubscription, NavigationScreenProps } from 'react-navigation';
+import { NavigationActions, withNavigationFocus, NavigationEventSubscription, NavigationFocusInjectedProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { Asset, AssetType } from '../adapters/asset';
 import { NativeEventSubscription, View } from 'react-native';
@@ -20,8 +20,7 @@ import { ListItemFocusEvent, ListItemPressEvent } from '../components/listitem';
 
 type SearchDispatchProps = typeof mapDispatchToProps;
 
-interface SearchProps extends NavigationScreenProps, SearchDispatchProps {
-  isFocused: boolean;
+interface SearchProps extends NavigationFocusInjectedProps, SearchDispatchProps {
   data: { tv: Asset[]; movies: Asset[] };
 }
 

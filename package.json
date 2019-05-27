@@ -10,7 +10,10 @@
 		"test": "jest"
 	},
 	"dependencies": {
+		"@youi-public/orientation": "^0.0.3",
 		"@youi/react-native-youi": "5.1.1",
+		"babel-preset-es2015": "^6.24.1",
+		"babel-preset-stage-2": "^6.24.1",
 		"react": "^16.6.3",
 		"react-native": "0.55.3",
 		"react-navigation": "^2.12.1",

@@ -7,6 +7,7 @@
  */
 
 #include "App.h"
+#include "../../node_modules/@youi-public/orientation/src/cpp/Orientation.h"
 #include <appium/YiWebDriverLocator.h>
 #include <cxxreact/JSBigString.h>
 #include <glog/logging.h>
@@ -60,7 +61,12 @@ bool App::UserInit()
 #endif
 
     PlatformApp::SetJsBundleLoader(std::move(pBundleLoader));
-    return PlatformApp::UserInit();
+    
+    bool userInitSuccess = PlatformApp::UserInit();
+    
+    GetBridge().AddModule<Orientation>();
+        
+    return userInitSuccess;
 }
 
 bool App::UserStart()

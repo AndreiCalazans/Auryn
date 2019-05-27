@@ -1,0 +1,133 @@
+apply plugin: "com.android.application"
+
+android {
+    aaptOptions {
+        cruncherEnabled = false
+    }
+
+    lintOptions {
+        abortOnError = false
+    }
+
+    packagingOptions {
+        doNotStrip "**/*.so"
+    }
+
+    compileSdkVersion 27
+    buildToolsVersion "28.0.1"
+    
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        applicationId "@YI_PACKAGE_NAME@"
+        minSdkVersion @YI_API_LEVEL@
+        targetSdkVersion @YI_TARGET_API_LEVEL@
+        versionCode @YI_BUILD_NUMBER@
+        versionName "@YI_VERSION_NUMBER@"
+        externalNativeBuild {
+            cmake {
+                arguments '-DYouiEngine_DIR:INTERNAL=@YouiEngine_DIR@',
+                    '-DYI_PLATFORM:INTERNAL=Android',
+                    '-DYI_BUILD_NUMBER:INTERNAL=@YI_BUILD_NUMBER@',
+                    '-DYI_VERSION_NUMBER:INTERNAL=@YI_VERSION_NUMBER@',
+@YI_PROJECT_VARIABLES@
+                    // This is required for the engine to link the
+                    // 'native_app_glue' and 'cpufeatures' libraries
+                    // in the correct order.
+                    //
+                    // If the project is a library, this can be set to 0 or
+                    // omitted.
+                    '-DYI_IS_ANDROID_APPLICATION=1'
+                targets '@YI_PROJECT_NAME@'
+
+                version '@CMAKE_VERSION@'
+            }
+            @YI_NDK_FILTER_LIST@
+        }
+    }
+
+    sourceSets {
+        main {
+            setRoot("@CMAKE_CURRENT_SOURCE_DIR@/android/modules/Auryn/src/main")
+            manifest.srcFile "@YI_MANIFEST_FILEPATH@"
+            assets.srcDirs = [ @YI_ASSET_DIRS@]
+            jniLibs.srcDirs = [ "@YI_ENGINE_HOME@/libs/android/jniLibs" ]
+            java.srcDirs = ["@CMAKE_CURRENT_SOURCE_DIR@/../node_modules/@youi-public/orientation/src/java", "@CMAKE_CURRENT_SOURCE_DIR@/android/modules/Auryn/src/main/java"]
+        }
+        @YI_JNI_LIBS_DIRS_LISTS@
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "@CMAKE_CURRENT_SOURCE_DIR@/CMakeLists.txt"
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("@YI_KEYSTORE_FILENAME@")
+            storePassword "@YI_KEYSTORE_PASS@"
+            keyAlias "@YI_KEYSTORE_ALIAS@"
+            keyPassword "@YI_KEYSTORE_ALIAS_PASS@"
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable = true
+        }
+        release {
+            minifyEnabled = false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+@YI_ABI_PRODUCT_FLAVORS@
+}
+
+task startApplication (type: Exec) {
+    commandLine android.getAdbExe().toString(), "shell",
+        "monkey",
+        "-p", "@YI_PACKAGE_NAME@",
+        "-c", "android.intent.category.LAUNCHER", "1"
+
+    doLast {
+        println "Starting application '@YI_PACKAGE_NAME@'..."
+    }
+}
+
+task copyResources {
+    doLast {
+        exec {
+            commandLine "@CMAKE_COMMAND@",
+                "-DYI_PROJECT_DIR=@CMAKE_CURRENT_SOURCE_DIR@",
+                "-DYI_OUTPUT_DIR=@YI_OUTPUT_DIR@",
+                @YI_ADDITIONAL_ASSET_ARGUMENTS@
+                "-P", "@YouiEngine_DIR@/cmake/Modules/android/YiAndroidAssetCopying.cmake"
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name.matches('generate(.+)Assets')) {
+        task.dependsOn copyResources
+    }
+}
+
+dependencies {
+    // Include local JAR files
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    @YI_MODULE_DEPENDENCIES@
+    @YI_YOUIENGINE_DEPENDENCY@
+
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.8.0'
+    implementation 'com.google.android.gms:play-services-ads:15.0.1'
+
+    // Load unit test support libraries
+    testImplementation "junit:junit:4.12"
+}

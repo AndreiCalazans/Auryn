@@ -891,6 +891,11 @@
   resolved "https://youi.jfrog.io/youi/api/npm/rn-modules/@youi-public/orientation/-/@youi-public/orientation-0.0.3.tgz#d547f845413db46cf3d01aaf4a088897b4d92cc6"
   integrity sha1-1Uf4RUE9tGzz0BqvSgiIl7TZLMY=
 
+"@youi-public/status-bar@^0.0.3":
+  version "0.0.3"
+  resolved "https://youi.jfrog.io/youi/api/npm/rn-modules/@youi-public/status-bar/-/@youi-public/status-bar-0.0.3.tgz#fca5c9113c871e65eb26d3dec53f4468c331ead4"
+  integrity sha1-/KXJETyHHmXrJtPexT9EaMMx6tQ=
+
 "@youi/react-native-youi@5.1.1":
   version "5.1.1"
   resolved "https://youi.jfrog.io/youi/api/npm/jspkg/@youi/react-native-youi/-/@youi/react-native-youi-5.1.1.tgz#a9581848166eb7755664cc5d422a0be7e8fa7136"

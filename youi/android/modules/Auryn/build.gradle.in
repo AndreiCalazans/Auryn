@@ -55,7 +55,7 @@ android {
             manifest.srcFile "@YI_MANIFEST_FILEPATH@"
             assets.srcDirs = [ @YI_ASSET_DIRS@]
             jniLibs.srcDirs = [ "@YI_ENGINE_HOME@/libs/android/jniLibs" ]
-            java.srcDirs = ["@CMAKE_CURRENT_SOURCE_DIR@/../node_modules/@youi-public/orientation/src/java", "@CMAKE_CURRENT_SOURCE_DIR@/android/modules/Auryn/src/main/java"]
+            java.srcDirs = ["@CMAKE_CURRENT_SOURCE_DIR@/../node_modules/@youi-public/status-bar/src/java", "@CMAKE_CURRENT_SOURCE_DIR@/../node_modules/@youi-public/orientation/src/java", "@CMAKE_CURRENT_SOURCE_DIR@/android/modules/Auryn/src/main/java"]
         }
         @YI_JNI_LIBS_DIRS_LISTS@
     }

@@ -2,6 +2,7 @@
 package tv.youi;
 
 import android.app.Application;
+import youi.module.StatusBar;
 import youi.module.Orientation;
 
 public class AurynApplication extends Application {
@@ -12,6 +13,8 @@ public class AurynApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        StatusBar.createInstance(this);
 
         Orientation.createInstance(this);
         instance = this;

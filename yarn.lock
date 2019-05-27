@@ -886,6 +886,11 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
+"@youi-public/dev-panel@^0.0.1":
+  version "0.0.1"
+  resolved "https://youi.jfrog.io/youi/api/npm/rn-modules/@youi-public/dev-panel/-/@youi-public/dev-panel-0.0.1.tgz#25c3fda36969ba072152da794960c4e771d5dece"
+  integrity sha1-JcP9o2lpugchUtp5SWDE53HV3s4=
+
 "@youi-public/orientation@^0.0.3":
   version "0.0.3"
   resolved "https://youi.jfrog.io/youi/api/npm/rn-modules/@youi-public/orientation/-/@youi-public/orientation-0.0.3.tgz#d547f845413db46cf3d01aaf4a088897b4d92cc6"

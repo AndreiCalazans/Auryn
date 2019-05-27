@@ -6,9 +6,11 @@
 #
 ###
 file(GLOB_RECURSE YI_PROJECT_SOURCE
+  "../node_modules/@youi-public/dev-panel/src/cpp/modules/*.cpp"
   "../node_modules/@youi-public/status-bar/src/cpp/*.cpp"
   "../node_modules/@youi-public/orientation/src/cpp/*.cpp" "src/*.cpp")
 
 file(GLOB_RECURSE YI_PROJECT_HEADERS
+  "../node_modules/@youi-public/dev-panel/src/cpp/modules/*.h"
   "../node_modules/@youi-public/status-bar/src/cpp/*.h"
   "../node_modules/@youi-public/orientation/src/cpp/*.h" "src/*.h")

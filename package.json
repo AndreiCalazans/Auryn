@@ -10,6 +10,7 @@
 		"test": "jest"
 	},
 	"dependencies": {
+		"@youi-public/dev-panel": "^0.0.1",
 		"@youi-public/orientation": "^0.0.3",
 		"@youi-public/status-bar": "^0.0.3",
 		"@youi/react-native-youi": "5.1.1",

@@ -7,6 +7,7 @@
  */
 
 #include "App.h"
+#include "../../node_modules/@youi-public/dev-panel/src/cpp/modules/DevPanelModule.h"
 #include "../../node_modules/@youi-public/status-bar/src/cpp/StatusBarModule.h"
 #include "../../node_modules/@youi-public/orientation/src/cpp/Orientation.h"
 #include <appium/YiWebDriverLocator.h>
@@ -64,6 +65,9 @@ bool App::UserInit()
     PlatformApp::SetJsBundleLoader(std::move(pBundleLoader));
     
     bool userInitSuccess = PlatformApp::UserInit();
+    
+    GetBridge().AddModule<DevPanelModule>();
+        
     
     GetBridge().AddModule<StatusBar>();
         
